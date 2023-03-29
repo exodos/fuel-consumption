@@ -3,12 +3,11 @@ import {
   InferGetServerSidePropsType,
   NextPage,
 } from "next";
-import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]";
 import SiteHeader from "../components/layout/header";
 
 const Home = (
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
+  props
 ) => {
   return (
     <>
@@ -32,61 +31,6 @@ const Home = (
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
-  if (!session) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/auth/signin",
-      },
-    };
-  } else if (session?.user?.adminRestPassword) {
-    return {
-      redirect: {
-        destination: "/auth/force-reset",
-        permanent: false,
-      },
-    };
-  } else if (session?.user?.memberships?.role === "INSURER") {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/insurer",
-      },
-    };
-  } else if (
-    session?.user?.memberships?.role === "MEMBER" ||
-    session?.user?.memberships?.role === "BRANCHADMIN" ||
-    session?.user?.memberships?.role === "USER"
-  ) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/branch",
-      },
-    };
-  } else if (session?.user?.memberships?.role === "TRAFFICPOLICEADMIN") {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/police",
-      },
-    };
-  } else if (session?.user?.memberships?.role === "TRAFFICPOLICEMEMBER") {
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/police/user",
-      },
-    };
-  }
 
-  return {
-    props: {
-      session,
-    },
-  };
-};
 
 export default Home;

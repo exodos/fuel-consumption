@@ -1,6 +1,5 @@
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { Disclosure } from "@headlessui/react";
 import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -12,11 +11,10 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import { FaUserCircle } from "react-icons/fa";
+import { FaGasPump, FaHome, FaUserCircle } from "react-icons/fa";
 import Link from "next/link";
 import MyLink from "./my-link";
 import { useRouter } from "next/router";
-import { Icons } from "./icons";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -26,7 +24,12 @@ type Props = {
   children: ReactNode;
 };
 
-const NavBar = ({ navigation, children }) => {
+const navigation = [
+  { name: "Dash Board", href: "/", icon: FaHome, current: true },
+  { name: "Consumption", href: "#", icon: FaGasPump, current: false },
+];
+
+const NavBar = ({ children }: Props) => {
   const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dayTime, setDayTime] = useState("");
@@ -131,86 +134,27 @@ const NavBar = ({ navigation, children }) => {
                     </div>
                     <nav className="mt-5 h-full divide-y divide-cyan-800 overflow-y-auto">
                       <div className="space-y-1 px-2">
-                        {navigation.map((item) =>
-                          !item.children ? (
-                            <div key={item.name}>
-                              <MyLink href={item.href}>
-                                <a
-                                  className={classNames(
-                                    item.current
-                                      ? "bg-gray-200 text-gray-500"
-                                      : "text-gray-800 hover:text-white hover:bg-gray-300",
-                                    "group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                                  )}
-                                  aria-current={
-                                    item.current ? "page" : undefined
-                                  }
-                                >
-                                  <Icons rows={item.icon} />
-                                  {item.name}
-                                </a>
-                              </MyLink>
-                            </div>
-                          ) : (
-                            <Disclosure
-                              as="div"
-                              key={item.name}
-                              className="space-y-1"
-                            >
-                              {({ open }) => (
-                                <>
-                                  <Disclosure.Button
-                                    className={classNames(
-                                      item.current
-                                        ? "bg-gray-200 text-gray-500"
-                                        : "text-gray-800 hover:text-white hover:bg-gray-300",
-                                      "group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    )}
-                                  >
-                                    <Icons rows={item.icon} />
-                                    <span className="flex-1">{item.name}</span>
-                                    <svg
-                                      className={classNames(
-                                        open
-                                          ? "text-gray-400 rotate-90"
-                                          : "text-gray-300",
-                                        "ml-3 flex-shrink-0 h-5 w-5 transform group-hover:text-gray-400 transition-colors ease-in-out duration-150"
-                                      )}
-                                      viewBox="0 0 20 20"
-                                      aria-hidden="true"
-                                    >
-                                      <path
-                                        d="M6 6L14 10L6 14V6Z"
-                                        fill="currentColor"
-                                      />
-                                    </svg>
-                                  </Disclosure.Button>
-                                  <Disclosure.Panel className="space-y-1">
-                                    {item.children.map((subItem) => (
-                                      <Link
-                                        key={subItem.name}
-                                        href={subItem.href}
-                                        passHref
-                                        legacyBehavior
-                                      >
-                                        <a>
-                                          <Disclosure.Button
-                                            key={subItem.name}
-                                            // as="a"
-                                            // href={subItem.href}
-                                            className="group w-full flex items-center pl-11 pr-2 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-white hover:bg-gray-300"
-                                          >
-                                            {subItem.name}
-                                          </Disclosure.Button>
-                                        </a>
-                                      </Link>
-                                    ))}
-                                  </Disclosure.Panel>
-                                </>
-                              )}
-                            </Disclosure>
-                          )
-                        )}
+                        {navigation.map((item) => (
+                          <div key={item.name}>
+                            <Link href={item.href} passHref legacyBehavior>
+                              <a
+                                className={classNames(
+                                  item.current
+                                    ? "bg-lightBlue text-white"
+                                    : "text-black hover:bg-deepBlue hover:text-white",
+                                  "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                                )}
+                                aria-current={item.current ? "page" : undefined}
+                              >
+                                <item.icon
+                                  className="mr-4 h-6 w-6 flex-shrink-0 text-lightGreen"
+                                  aria-hidden="true"
+                                />
+                                {item.name}
+                              </a>
+                            </Link>
+                          </div>
+                        ))}
                       </div>
                     </nav>
                     <div className="flex flex-shrink-0 p-4 lg:border-t">
@@ -259,84 +203,28 @@ const NavBar = ({ navigation, children }) => {
                 aria-label="Sidebar"
               >
                 <div className="space-y-1 px-2">
-                  {navigation.map((item) =>
-                    !item.children ? (
-                      <div key={item.name}>
-                        <MyLink href={item.href}>
-                          <a
-                            className={classNames(
-                              item.current
-                                ? "bg-gray-200 text-gray-500"
-                                : "text-gray-800 hover:text-white hover:bg-gray-300",
-                              "group flex items-center px-2 py-2 text-base font-medium rounded-md"
-                            )}
-                            aria-current={item.current ? "page" : undefined}
-                          >
-                            <Icons rows={item.icon} />
-                            {item.name}
-                          </a>
-                        </MyLink>
-                      </div>
-                    ) : (
-                      <Disclosure
-                        as="div"
-                        key={item.name}
-                        className="space-y-1"
-                      >
-                        {({ open }) => (
-                          <>
-                            <Disclosure.Button
-                              className={classNames(
-                                item.current
-                                  ? "bg-gray-200 text-gray-500"
-                                  : "text-gray-800 hover:text-white hover:bg-gray-300",
-                                "group w-full flex items-center pl-2 pr-1 py-2 text-left text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                              )}
-                            >
-                              <Icons rows={item.icon} />
-                              <span className="flex-1">{item.name}</span>
-                              <svg
-                                className={classNames(
-                                  open
-                                    ? "text-gray-400 rotate-90"
-                                    : "text-gray-300",
-                                  "ml-3 flex-shrink-0 h-5 w-5 transform group-hover:text-gray-400 transition-colors ease-in-out duration-150"
-                                )}
-                                viewBox="0 0 20 20"
-                                aria-hidden="true"
-                              >
-                                <path
-                                  d="M6 6L14 10L6 14V6Z"
-                                  fill="currentColor"
-                                />
-                              </svg>
-                            </Disclosure.Button>
-                            <Disclosure.Panel className="space-y-1">
-                              {item.children.map((subItem) => (
-                                <Link
-                                  key={subItem.name}
-                                  href={subItem.href}
-                                  passHref
-                                  legacyBehavior
-                                >
-                                  <a>
-                                    <Disclosure.Button
-                                      key={subItem.name}
-                                      // as="a"
-                                      // href={subItem.href}
-                                      className="group w-full flex items-center pl-11 pr-2 py-2 text-sm font-medium text-gray-600 rounded-md hover:text-white hover:bg-gray-300"
-                                    >
-                                      {subItem.name}
-                                    </Disclosure.Button>
-                                  </a>
-                                </Link>
-                              ))}
-                            </Disclosure.Panel>
-                          </>
-                        )}
-                      </Disclosure>
-                    )
-                  )}
+                  {navigation.map((item) => (
+                    <div key={item.name}>
+                      <Link href={item.href} passHref legacyBehavior>
+                        <a
+                          key={item.name}
+                          className={classNames(
+                            item.current
+                              ? "bg-lightBlue text-white"
+                              : "text-black hover:bg-deepBlue hover:text-white",
+                            "group flex items-center rounded-md px-2 py-2 text-base font-medium"
+                          )}
+                          aria-current={item.current ? "page" : undefined}
+                        >
+                          <item.icon
+                            className="mr-4 h-6 w-6 flex-shrink-0 text-lightGreen"
+                            aria-hidden="true"
+                          />
+                          {item.name}
+                        </a>
+                      </Link>
+                    </div>
+                  ))}
                 </div>
               </nav>
               <div className="flex flex-shrink-0 p-2">
@@ -366,7 +254,7 @@ const NavBar = ({ navigation, children }) => {
                 <div className="flex items-center lg:ml-12">
                   <div className="hidden lg:block">
                     <h1 className="ml-3 text-xl font-bold leading-7 text-gray-50 sm:truncate sm:leading-9 capitalize">
-                      {dayTime}, {session?.user?.firstName}
+                      {/* {dayTime}, {session?.user?.firstName} */}
                       {/* {session?.user?.lastName} */}
                     </h1>
                   </div>

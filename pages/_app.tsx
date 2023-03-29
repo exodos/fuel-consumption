@@ -30,38 +30,17 @@ export default function App({
         refetchOnWindowFocus={true}
       >
         <NotificationContextProvider>
-          {router.pathname.startsWith("/auth/signin") ||
-          router.pathname.startsWith("/auth/force-reset") ? (
-            <MainSignInLayout>
-              <Head>
-                <title>Third Party Insurance Management System</title>
-                <meta
-                  name="description"
-                  content="Third Party Insurance Management System"
-                />
-                <meta
-                  name="viewport"
-                  content="initial-scale=1.0, width=device-width"
-                />
-              </Head>
-              <Component {...pageProps} />
-            </MainSignInLayout>
-          ) : (
-            <MainLayout>
-              <Head>
-                <title>Third Party Insurance Management System</title>
-                <meta
-                  name="description"
-                  content="Third Party Insurance Management System"
-                />
-                <meta
-                  name="viewport"
-                  content="initial-scale=1.0, width=device-width"
-                />
-              </Head>
-              <Component {...pageProps} />
-            </MainLayout>
-          )}
+          <MainLayout>
+            <Head>
+              <title>Fuel Consumption</title>
+              <meta name="description" content="Fuel Consumption" />
+              <meta
+                name="viewport"
+                content="initial-scale=1.0, width=device-width"
+              />
+            </Head>
+            <Component {...pageProps} />
+          </MainLayout>
         </NotificationContextProvider>
       </SessionProvider>
     </ApolloProvider>
