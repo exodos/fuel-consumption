@@ -26,7 +26,12 @@ type Props = {
 
 const navigation = [
   { name: "Dash Board", href: "/", icon: FaHome, current: true },
-  { name: "Consumption", href: "#", icon: FaGasPump, current: false },
+  {
+    name: "Consumption",
+    href: "/consumption",
+    icon: FaGasPump,
+    current: false,
+  },
 ];
 
 const NavBar = ({ children }: Props) => {

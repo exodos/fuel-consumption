@@ -1,18 +1,7 @@
-import { DateTimeResolver } from "graphql-scalars";
-import { Prisma } from "@prisma/client";
-import {
-  arg,
-  asNexusMethod,
-  enumType,
-  extendType,
-  inputObjectType,
-  intArg,
-  list,
-  nonNull,
-  objectType,
-  stringArg,
-} from "nexus";
+import _ from "lodash";
+import { extendType, list, objectType } from "nexus";
 import { fuel_type_enum } from "./Consumption";
+import { endOfToday, format, subDays } from "date-fns";
 
 export const DailyConsumption = objectType({
   name: "DailyConsumption",
@@ -26,84 +15,95 @@ export const DailyConsumption = objectType({
   },
 });
 
-// export const ConsumptionPagination = extendType({
+// export const totalTransactionQuery = extendType({
 //   type: "Query",
 //   definition(t) {
-//     t.nonNull.field("feedConsumption", {
-//       type: FeedConsumption,
-//       args: {
-//         filter: stringArg(),
-//         skip: intArg(),
-//         take: intArg(),
-//         orderBy: arg({ type: list(nonNull(ConsumptionOrderByInput)) }),
-//       },
-//       resolve: async (parent, args, ctx) => {
-//         const where = args.filter
-//           ? {
-//               OR: [
-//                 { transactionNumber: args.filter },
-//                 {
-//                   plateNumber: {
-//                     contains: args.filter,
-//                   },
-//                 },
-//                 { mobileNumber: args.filter },
-//               ],
-//             }
-//           : {};
+//     t.field("totalTransaction", {
+//       type: DailyConsumption,
+//       resolve: async (_parent, args, ctx) => {
+//         // return ctx.prisma.dailyConsumption.aggregate({
+//         //   _count: {
+//         //     amount: true,
+//         //   },
+//         // });
 
-//         const consumptions = await ctx.prisma.consumption.findMany({
-//           where,
-//           skip: args?.skip as number | undefined,
-//           take: args?.take as number | undefined,
-//           orderBy: args?.orderBy as
-//             | Prisma.Enumerable<Prisma.ConsumptionOrderByWithRelationInput>
-//             | undefined,
-//         });
-
-//         const totalConsumption = await ctx.prisma.consumption.count({
-//           where,
-//         });
-//         const maxPage = Math.ceil(totalConsumption / args?.take);
-
-//         return {
-//           consumptions,
-//           maxPage,
-//           totalConsumption,
-//         };
+//         return await ctx.prisma.dailyConsumption.count();
 //       },
 //     });
 //   },
 // });
 
-// export const consumptionByPlateNumberQuery = extendType({
+// export const dailyTransactionQuery = extendType({
 //   type: "Query",
 //   definition(t) {
-//     t.field("consumptionByPlateNumber", {
-//       type: Consumption,
-//       args: {
-//         plateCode: nonNull(stringArg()),
-//         plateRegion: nonNull(stringArg()),
-//         plateNumber: nonNull(stringArg()),
-//       },
-//       resolve(_parent, args, ctx) {
-//         return ctx.prisma.consumption.findFirst({
+//     t.field("feedTotalTransaction", {
+//       type: FeedTotalTransaction,
+//       resolve: async (_parent, _args, ctx) => {
+//         const result = await ctx.prisma.dailyConsumption.groupBy({
+//           by: ["day"],
 //           where: {
-//             plateCode: args.plateCode,
-//             plateRegion: args.plateRegion,
-//             plateNumber: args.plateRegion,
+//             day: {
+//               lte: endOfToday(),
+//               gte: subDays(new Date(), 7),
+//             },
+//           },
+//           _count: {
+//             amount: true,
 //           },
 //         });
+
+//         const dailyTransaction = result.map((g) => ({
+//           day: g.day,
+//           amount: g._count.amount,
+//         }));
+
+//         return { dailyTransaction };
 //       },
 //     });
 //   },
 // });
 
-// export const FeedConsumption = objectType({
-//   name: "FeedConsumption",
+// export const dailyPaymentQuery = extendType({
+//   type: "Query",
 //   definition(t) {
-//     t.nonNull.list.nonNull.field("consumptions", { type: Consumption });
-//     t.nonNull.int("totalConsumption");
-//     t.int("maxPage");
+//     t.field("feedTotalPayment", {
+//       type: FeedTotalPayment,
+//       resolve: async (_parent, _args, ctx) => {
+//         const result = await ctx.prisma.dailyConsumption.groupBy({
+//           by: ["day"],
+//           where: {
+//             day: {
+//               lte: endOfToday(),
+//               gte: subDays(new Date(), 7),
+//             },
+//           },
+//           _sum: {
+//             amount: true,
+//           },
+//         });
+
+//         const dailyPayment = result.map((g) => ({
+//           day: g.day,
+//           amount: g._sum.amount,
+//         }));
+
+//         return { dailyPayment };
+//       },
+//     });
+//   },
+// });
+// export const FeedTotalTransaction = objectType({
+//   name: "FeedTotalTransaction",
+//   definition(t) {
+//     t.date("day");
+//     t.int("amount");
+//   },
+// });
+
+// export const FeedTotalPayment = objectType({
+//   name: "FeedTotalPayment",
+//   definition(t) {
+//     t.date("day");
+//     t.float("amount");
 //   },
 // });

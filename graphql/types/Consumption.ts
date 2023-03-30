@@ -57,38 +57,52 @@ export const ConsumptionPagination = extendType({
         orderBy: arg({ type: list(nonNull(ConsumptionOrderByInput)) }),
       },
       resolve: async (_parent, args, ctx) => {
-        let plateC, plateR, plateN;
-        if (args.filter) {
-          plateC = args?.filter?.slice(0, 1);
-          plateR = args?.filter?.slice(1, 3);
-          plateN = args?.filter?.slice(3);
-        }
+        // let where = {};
+        // if (args.filter) {
+        //   if (typeof args.filter.slice(0, 1) === "number") {
+        //     where = {
+        //       OR: [
+        //         { transactionNumber: args.filter },
+        //         { mobileNumber: args.filter },
+        //         {
+        //           AND: [
+        //             {
+        //               plateCode: args?.filter.slice(0, 1),
+        //             },
+        //             {
+        //               plateRegion: plate_region_enum[args?.filter?.slice(1, 3)],
+        //             },
+        //             {
+        //               plateNumber: args?.filter?.slice(3),
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     };
+        //   } else {
+        //     where = {
+        //       OR: [
+        //         { transactionNumber: args.filter },
+        //         { mobileNumber: args.filter },
+        //         {
+        //           plateNumber: {
+        //             contains: args.filter,
+        //           },
+        //         },
+        //       ],
+        //     };
+        //   }
+        // }
+
         const where = args.filter
           ? {
               OR: [
                 { transactionNumber: args.filter },
+                { mobileNumber: args.filter },
                 {
                   plateNumber: {
                     contains: args.filter,
                   },
-                },
-                { mobileNumber: args.filter },
-                {
-                  AND: [
-                    {
-                      OR: [
-                        {
-                          plateCode: plateC,
-                        },
-                        {
-                          plateRegion: plateR,
-                        },
-                        {
-                          plateNumber: plateN,
-                        },
-                      ],
-                    },
-                  ],
                 },
               ],
             }

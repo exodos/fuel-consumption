@@ -1,13 +1,10 @@
 import format from "date-fns/format";
 import { useRouter } from "next/router";
 import ReactPaginate from "react-paginate";
-import { useContext, useState } from "react";
-import ReactTooltip from "react-tooltip";
+import { useContext } from "react";
 import NotificationContext from "@/store/notification-context";
 
 const ListConsumption = ({ consumptionData }) => {
-  const notificationCtx = useContext(NotificationContext);
-
   const router = useRouter();
 
   const handlePaginate = (page: any) => {
@@ -184,73 +181,67 @@ const ListConsumption = ({ consumptionData }) => {
                             {i + 1}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.transactionNumber}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.amount}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.fuelInLiters}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.fuelType}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.plateCode}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.plateRegion}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.plateNumber}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.engineNumber}
+                            {format(new Date(item.paidAt), "MMM-dd-yyyy")}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.chassisNumber}
+                            {item.debitAccountNumber}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.vehicleModel}
+                            {item.creditAccountNumber}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.bodyType}
+                            {item.fuelStationId}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.horsePower}
+                            {item.fuelStationRegion}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.manufacturedYear}
+                            {item.fuelStationName}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.vehicleType}
+                            {item.fuelStationZone}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.vehicleSubType}
+                            {item.fuelStationWoreda}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.vehicleDetails}
+                            {item.firstName}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.vehicleUsage}
+                            {item.middleName}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.premiumTarif}
+                            {item.lastName}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.passengerNumber}
+                            {item.mobileNumber}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.carryingCapacityInGoods}
+                            {item.sourceId}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.purchasedYear}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.dutyFreeValue}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.dutyPaidValue}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.vehicleStatus}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.isInsured}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.insureds.firstName}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.insureds.lastName}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.insureds.mobileNumber}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.branchs.branchName}
+                            {item.companyId}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {format(new Date(item.createdAt), "MMM-dd-yyyy")}
