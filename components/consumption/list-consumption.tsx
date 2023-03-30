@@ -1,8 +1,6 @@
 import format from "date-fns/format";
 import { useRouter } from "next/router";
 import ReactPaginate from "react-paginate";
-import { useContext } from "react";
-import NotificationContext from "@/store/notification-context";
 
 const ListConsumption = ({ consumptionData }) => {
   const router = useRouter();
@@ -55,7 +53,7 @@ const ListConsumption = ({ consumptionData }) => {
                         scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
-                        Type Of Fuel
+                        Fuel Type
                       </th>
                       <th
                         scope="col"
@@ -122,6 +120,30 @@ const ListConsumption = ({ consumptionData }) => {
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
                         Fuel Station Wereda
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Fuel Station Kebele
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Last Kilo Meter
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Reason Type Name
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        Reason Type Code
                       </th>
                       <th
                         scope="col"
@@ -214,7 +236,7 @@ const ListConsumption = ({ consumptionData }) => {
                             {item.fuelStationId}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.fuelStationRegion}
+                            {item.fuelStationRegion}.{" "}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.fuelStationName}
@@ -224,6 +246,18 @@ const ListConsumption = ({ consumptionData }) => {
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.fuelStationWoreda}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.fuelStationKebele}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.lastKiloMeter}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.reasonTypeName}
+                          </td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {item.reasonTypeCode}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.firstName}

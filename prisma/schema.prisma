@@ -9,80 +9,74 @@ datasource db {
 }
 
 model Consumption {
-  id                  Int               @default(autoincrement())
-  transactionNumber   String            @map("transaction_number")
-  amount              Float
-  fuelInLiters        Float             @map("fuel_in_liters")
-  fuelType            fuel_type_enum    @map("fuel_type")
-  plateCode           Int               @map("plate_code")
-  plateRegion         plate_region_enum @map("plate_region")
-  plateNumber         String            @map("plate_number")
-  paidAt              DateTime          @map("paid_at")
-  debitAccountNumber  String            @map("debit_account_number")
-  creditAccountNumber String            @map("credit_account_number")
-  fuelStationId       String            @map("fuel_station_id")
-  fuelStationRegion   String            @map("fuel_station_region")
-  fuelStationName     String            @map("fuel_station_name")
-  fuelStationZone     String            @map("fuel_station_zone")
-  fuelStationWoreda   String            @map("fuel_station_woreda")
-  firstName           String            @map("first_name")
-  middleName          String            @map("middle_name")
-  lastName            String            @map("last_name")
-  mobileNumber        String            @map("mobile_number")
-  sourceId            Int               @map("source_id")
-  companyId           String            @map("company_id")
-  createdAt           DateTime          @default(now()) @map("created_at")
-  updatedAt           DateTime          @updatedAt @map("updated_at")
+  id                  Int      @default(autoincrement())
+  transactionNumber   String   @map("transaction_number")
+  amount              Float    @db.DoublePrecision
+  fuelInLiters        Float    @map("fuel_in_liters") @db.DoublePrecision
+  fuelType            String   @map("fuel_type")
+  plateCode           String   @map("plate_code")
+  plateRegion         String   @map("plate_region")
+  plateNumber         String   @map("plate_number")
+  paidAt              DateTime @map("paid_at")
+  debitAccountNumber  String   @map("debit_account_number")
+  creditAccountNumber String   @map("credit_account_number")
+  fuelStationId       String   @map("fuel_station_id")
+  fuelStationRegion   String   @map("fuel_station_region")
+  fuelStationName     String   @map("fuel_station_name")
+  fuelStationZone     String   @map("fuel_station_zone")
+  fuelStationWoreda   String   @map("fuel_station_woreda")
+  fuelStationKebele   String   @map("fuel_station_kebele")
+  lastKiloMeter       Int      @map("last_kilometer")
+  reasonTypeName      String   @map("reason_type_name")
+  reasonTypeCode      String   @map("reason_type_code")
+  firstName           String   @map("first_name")
+  middleName          String   @map("middle_name")
+  lastName            String   @map("last_name")
+  mobileNumber        String   @map("mobile_number")
+  sourceId            String   @map("source_id")
+  companyId           String   @map("company_id")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   @@id([transactionNumber, plateCode, plateRegion, plateNumber])
   @@map("consumption")
 }
 
 model DailyConsumption {
-  amount        Float
+  id            Int      @id @default(autoincrement())
+  amount        Float    @db.DoublePrecision
+  fuelInLiters  Float    @map("fuel_in_liters") @db.DoublePrecision
+  fuelType      String   @map("fuel_type")
+  fuelStationId String   @map("fuel_station_id")
   day           DateTime
-  fuelInLiters  Float          @map("fuel_in_liters")
-  fuelStationId String         @map("fuel_station_id")
-  fuelType      fuel_type_enum @map("fuel_type")
-  sourceId      Int            @map("source_id")
+  sourceId      String   @map("source_id")
 
-  @@id([day, fuelStationId])
+  @@unique([fuelType, fuelStationId, sourceId, day])
   @@map("daily_consumption")
 }
 
 model WeeklyConsumption {
-  amount        Float
+  id            Int      @id @default(autoincrement())
+  amount        Float    @db.DoublePrecision
+  fuelInLiters  Float    @map("fuel_in_liters")
+  fuelType      String   @map("fuel_type")
+  fuelStationId String   @map("fuel_station_id")
   week          DateTime
-  fuelInLiters  Float          @map("fuel_in_liters")
-  fuelStationId String         @map("fuel_station_id")
-  fuelType      fuel_type_enum @map("fuel_type")
-  sourceId      Int            @map("source_id")
+  sourceId      String   @map("source_id")
 
-  @@id([week, fuelStationId])
+  @@unique([fuelType, fuelStationId, sourceId, week])
   @@map("weekly_consumption")
 }
 
 model MonthlyConsumption {
-  amount        Float
+  id            Int      @id @default(autoincrement())
+  amount        Float    @db.DoublePrecision
+  fuelInLiters  Float    @map("fuel_in_liters")
+  fuelType      String   @map("fuel_type")
+  fuelStationId String   @map("fuel_station_id")
   month         DateTime
-  fuelInLiters  Float          @map("fuel_in_liters")
-  fuelStationId String         @map("fuel_station_id")
-  fuelType      fuel_type_enum @map("fuel_type")
-  sourceId      Int            @map("source_id")
+  sourceId      String   @map("source_id")
 
-  @@id([month, fuelStationId])
+  @@unique([fuelType, fuelStationId, sourceId, month])
   @@map("monthly_consumption")
-}
-
-enum fuel_type_enum {
-  Diesel
-  Benzene
-}
-
-enum plate_region_enum {
-  AA
-  AM
-  OR
-  TG
-  HR
 }

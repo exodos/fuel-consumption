@@ -22,9 +22,9 @@ export const Consumption = objectType({
     t.string("transactionNumber");
     t.float("amount");
     t.float("fuelInLiters");
-    t.field("fuelType", { type: fuel_type_enum });
-    t.int("plateCode");
-    t.field("plateRegion", { type: plate_region_enum });
+    t.string("fuelType");
+    t.string("plateCode");
+    t.string("plateRegion");
     t.string("plateNumber");
     t.date("paidAt");
     t.string("debitAccountNumber");
@@ -34,11 +34,15 @@ export const Consumption = objectType({
     t.string("fuelStationName");
     t.string("fuelStationZone");
     t.string("fuelStationWoreda");
+    t.string("fuelStationKebele");
+    t.int("lastKiloMeter");
+    t.string("reasonTypeName");
+    t.string("reasonTypeCode");
     t.string("firstName");
     t.string("middleName");
     t.string("lastName");
     t.string("mobileNumber");
-    t.int("sourceId");
+    t.string("sourceId");
     t.string("companyId");
     t.date("createdAt");
     t.date("updatedAt");
@@ -96,13 +100,30 @@ export const ConsumptionPagination = extendType({
 
         const where = args.filter
           ? {
+              // OR: [
+              //   { transactionNumber: args.filter },
+              //   { mobileNumber: args.filter },
+              //   {
+              //     plateNumber: {
+              //       contains: args.filter,
+              //     },
+              //   },
+              // ],
               OR: [
                 { transactionNumber: args.filter },
                 { mobileNumber: args.filter },
                 {
-                  plateNumber: {
-                    contains: args.filter,
-                  },
+                  AND: [
+                    {
+                      plateCode: args?.filter.slice(0, 1),
+                    },
+                    {
+                      plateRegion: args?.filter?.slice(1, 3),
+                    },
+                    {
+                      plateNumber: args?.filter?.slice(3),
+                    },
+                  ],
                 },
               ],
             }
@@ -145,8 +166,8 @@ export const consumptionByPlateNumberQuery = extendType({
       resolve(_parent, args, ctx) {
         return ctx.prisma.consumption.findFirst({
           where: {
-            plateCode: Number(args.plateCode),
-            plateRegion: plate_region_enum[args.plateRegion],
+            plateCode: args.plateCode,
+            plateRegion: args.plateRegion,
             plateNumber: args.plateRegion,
           },
         });
@@ -162,16 +183,6 @@ export const FeedConsumption = objectType({
     t.nonNull.int("totalConsumption");
     t.int("maxPage");
   },
-});
-
-export const plate_region_enum = enumType({
-  name: "plate_region_enum",
-  members: ["AA", "AM", "OR", "TG", "SM", "HR"],
-});
-
-export const fuel_type_enum = enumType({
-  name: "fuel_type_enum",
-  members: ["Diesel", "Benzene"],
 });
 
 export const ConsumptionOrderByInput = inputObjectType({

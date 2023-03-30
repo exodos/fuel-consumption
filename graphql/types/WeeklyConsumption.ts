@@ -1,17 +1,17 @@
 import { DateTimeResolver } from "graphql-scalars";
 import { Prisma } from "@prisma/client";
 import { objectType } from "nexus";
-import { fuel_type_enum } from "./Consumption";
 
 export const WeeklyConsumption = objectType({
   name: "WeeklyConsumption",
   definition(t) {
+    t.int("id");
     t.float("amount");
-    t.date("week");
     t.float("fuelInLiters");
     t.string("fuelStationId");
-    t.field("fuelType", { type: fuel_type_enum });
-    t.int("sourceId");
+    t.string("fuelType");
+    t.date("week");
+    t.string("sourceId");
   },
 });
 

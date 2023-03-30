@@ -11,20 +11,24 @@ type Consumption {
   firstName: String
   fuelInLiters: Float
   fuelStationId: String
+  fuelStationKebele: String
   fuelStationName: String
   fuelStationRegion: String
   fuelStationWoreda: String
   fuelStationZone: String
-  fuelType: fuel_type_enum
+  fuelType: String
   id: Int
+  lastKiloMeter: Int
   lastName: String
   middleName: String
   mobileNumber: String
   paidAt: DateTime
-  plateCode: Int
+  plateCode: String
   plateNumber: String
-  plateRegion: plate_region_enum
-  sourceId: Int
+  plateRegion: String
+  reasonTypeCode: String
+  reasonTypeName: String
+  sourceId: String
   transactionNumber: String
   updatedAt: DateTime
 }
@@ -39,8 +43,9 @@ type DailyConsumption {
   day: DateTime
   fuelInLiters: Float
   fuelStationId: String
-  fuelType: fuel_type_enum
-  sourceId: Int
+  fuelType: String
+  id: Int
+  sourceId: String
 }
 
 """
@@ -58,9 +63,10 @@ type MonthlyConsumption {
   amount: Float
   fuelInLiters: Float
   fuelStationId: String
-  fuelType: fuel_type_enum
+  fuelType: String
+  id: Int
   month: DateTime
-  sourceId: Int
+  sourceId: String
 }
 
 type Query {
@@ -77,21 +83,8 @@ type WeeklyConsumption {
   amount: Float
   fuelInLiters: Float
   fuelStationId: String
-  fuelType: fuel_type_enum
-  sourceId: Int
+  fuelType: String
+  id: Int
+  sourceId: String
   week: DateTime
-}
-
-enum fuel_type_enum {
-  Benzene
-  Diesel
-}
-
-enum plate_region_enum {
-  AA
-  AM
-  HR
-  OR
-  SM
-  TG
 }

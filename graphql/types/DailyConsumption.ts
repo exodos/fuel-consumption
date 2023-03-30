@@ -1,17 +1,17 @@
 import _ from "lodash";
 import { extendType, list, objectType } from "nexus";
-import { fuel_type_enum } from "./Consumption";
 import { endOfToday, format, subDays } from "date-fns";
 
 export const DailyConsumption = objectType({
   name: "DailyConsumption",
   definition(t) {
+    t.int("id");
     t.float("amount");
-    t.date("day");
     t.float("fuelInLiters");
     t.string("fuelStationId");
-    t.field("fuelType", { type: fuel_type_enum });
-    t.int("sourceId");
+    t.string("fuelType");
+    t.date("day");
+    t.string("sourceId");
   },
 });
 

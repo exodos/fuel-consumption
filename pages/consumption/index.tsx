@@ -34,6 +34,10 @@ const FeedConsumption = gql`
         fuelStationName
         fuelStationZone
         fuelStationWoreda
+        fuelStationKebele
+        lastKiloMeter
+        reasonTypeName
+        reasonTypeCode
         firstName
         middleName
         lastName

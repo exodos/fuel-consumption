@@ -37,8 +37,6 @@ export interface NexusGenInputs {
 
 export interface NexusGenEnums {
   Sort: "asc" | "desc"
-  fuel_type_enum: "Benzene" | "Diesel"
-  plate_region_enum: "AA" | "AM" | "HR" | "OR" | "SM" | "TG"
 }
 
 export interface NexusGenScalars {
@@ -60,20 +58,24 @@ export interface NexusGenObjects {
     firstName?: string | null; // String
     fuelInLiters?: number | null; // Float
     fuelStationId?: string | null; // String
+    fuelStationKebele?: string | null; // String
     fuelStationName?: string | null; // String
     fuelStationRegion?: string | null; // String
     fuelStationWoreda?: string | null; // String
     fuelStationZone?: string | null; // String
-    fuelType?: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
+    fuelType?: string | null; // String
     id?: number | null; // Int
+    lastKiloMeter?: number | null; // Int
     lastName?: string | null; // String
     middleName?: string | null; // String
     mobileNumber?: string | null; // String
     paidAt?: NexusGenScalars['DateTime'] | null; // DateTime
-    plateCode?: number | null; // Int
+    plateCode?: string | null; // String
     plateNumber?: string | null; // String
-    plateRegion?: NexusGenEnums['plate_region_enum'] | null; // plate_region_enum
-    sourceId?: number | null; // Int
+    plateRegion?: string | null; // String
+    reasonTypeCode?: string | null; // String
+    reasonTypeName?: string | null; // String
+    sourceId?: string | null; // String
     transactionNumber?: string | null; // String
     updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
   }
@@ -82,8 +84,9 @@ export interface NexusGenObjects {
     day?: NexusGenScalars['DateTime'] | null; // DateTime
     fuelInLiters?: number | null; // Float
     fuelStationId?: string | null; // String
-    fuelType?: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
-    sourceId?: number | null; // Int
+    fuelType?: string | null; // String
+    id?: number | null; // Int
+    sourceId?: string | null; // String
   }
   FeedConsumption: { // root type
     consumptions: NexusGenRootTypes['Consumption'][]; // [Consumption!]!
@@ -94,17 +97,19 @@ export interface NexusGenObjects {
     amount?: number | null; // Float
     fuelInLiters?: number | null; // Float
     fuelStationId?: string | null; // String
-    fuelType?: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
+    fuelType?: string | null; // String
+    id?: number | null; // Int
     month?: NexusGenScalars['DateTime'] | null; // DateTime
-    sourceId?: number | null; // Int
+    sourceId?: string | null; // String
   }
   Query: {};
   WeeklyConsumption: { // root type
     amount?: number | null; // Float
     fuelInLiters?: number | null; // Float
     fuelStationId?: string | null; // String
-    fuelType?: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
-    sourceId?: number | null; // Int
+    fuelType?: string | null; // String
+    id?: number | null; // Int
+    sourceId?: string | null; // String
     week?: NexusGenScalars['DateTime'] | null; // DateTime
   }
 }
@@ -129,20 +134,24 @@ export interface NexusGenFieldTypes {
     firstName: string | null; // String
     fuelInLiters: number | null; // Float
     fuelStationId: string | null; // String
+    fuelStationKebele: string | null; // String
     fuelStationName: string | null; // String
     fuelStationRegion: string | null; // String
     fuelStationWoreda: string | null; // String
     fuelStationZone: string | null; // String
-    fuelType: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
+    fuelType: string | null; // String
     id: number | null; // Int
+    lastKiloMeter: number | null; // Int
     lastName: string | null; // String
     middleName: string | null; // String
     mobileNumber: string | null; // String
     paidAt: NexusGenScalars['DateTime'] | null; // DateTime
-    plateCode: number | null; // Int
+    plateCode: string | null; // String
     plateNumber: string | null; // String
-    plateRegion: NexusGenEnums['plate_region_enum'] | null; // plate_region_enum
-    sourceId: number | null; // Int
+    plateRegion: string | null; // String
+    reasonTypeCode: string | null; // String
+    reasonTypeName: string | null; // String
+    sourceId: string | null; // String
     transactionNumber: string | null; // String
     updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
@@ -151,8 +160,9 @@ export interface NexusGenFieldTypes {
     day: NexusGenScalars['DateTime'] | null; // DateTime
     fuelInLiters: number | null; // Float
     fuelStationId: string | null; // String
-    fuelType: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
-    sourceId: number | null; // Int
+    fuelType: string | null; // String
+    id: number | null; // Int
+    sourceId: string | null; // String
   }
   FeedConsumption: { // field return type
     consumptions: NexusGenRootTypes['Consumption'][]; // [Consumption!]!
@@ -163,9 +173,10 @@ export interface NexusGenFieldTypes {
     amount: number | null; // Float
     fuelInLiters: number | null; // Float
     fuelStationId: string | null; // String
-    fuelType: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
+    fuelType: string | null; // String
+    id: number | null; // Int
     month: NexusGenScalars['DateTime'] | null; // DateTime
-    sourceId: number | null; // Int
+    sourceId: string | null; // String
   }
   Query: { // field return type
     consumptionByPlateNumber: NexusGenRootTypes['Consumption'] | null; // Consumption
@@ -175,8 +186,9 @@ export interface NexusGenFieldTypes {
     amount: number | null; // Float
     fuelInLiters: number | null; // Float
     fuelStationId: string | null; // String
-    fuelType: NexusGenEnums['fuel_type_enum'] | null; // fuel_type_enum
-    sourceId: number | null; // Int
+    fuelType: string | null; // String
+    id: number | null; // Int
+    sourceId: string | null; // String
     week: NexusGenScalars['DateTime'] | null; // DateTime
   }
 }
@@ -191,20 +203,24 @@ export interface NexusGenFieldTypeNames {
     firstName: 'String'
     fuelInLiters: 'Float'
     fuelStationId: 'String'
+    fuelStationKebele: 'String'
     fuelStationName: 'String'
     fuelStationRegion: 'String'
     fuelStationWoreda: 'String'
     fuelStationZone: 'String'
-    fuelType: 'fuel_type_enum'
+    fuelType: 'String'
     id: 'Int'
+    lastKiloMeter: 'Int'
     lastName: 'String'
     middleName: 'String'
     mobileNumber: 'String'
     paidAt: 'DateTime'
-    plateCode: 'Int'
+    plateCode: 'String'
     plateNumber: 'String'
-    plateRegion: 'plate_region_enum'
-    sourceId: 'Int'
+    plateRegion: 'String'
+    reasonTypeCode: 'String'
+    reasonTypeName: 'String'
+    sourceId: 'String'
     transactionNumber: 'String'
     updatedAt: 'DateTime'
   }
@@ -213,8 +229,9 @@ export interface NexusGenFieldTypeNames {
     day: 'DateTime'
     fuelInLiters: 'Float'
     fuelStationId: 'String'
-    fuelType: 'fuel_type_enum'
-    sourceId: 'Int'
+    fuelType: 'String'
+    id: 'Int'
+    sourceId: 'String'
   }
   FeedConsumption: { // field return type name
     consumptions: 'Consumption'
@@ -225,9 +242,10 @@ export interface NexusGenFieldTypeNames {
     amount: 'Float'
     fuelInLiters: 'Float'
     fuelStationId: 'String'
-    fuelType: 'fuel_type_enum'
+    fuelType: 'String'
+    id: 'Int'
     month: 'DateTime'
-    sourceId: 'Int'
+    sourceId: 'String'
   }
   Query: { // field return type name
     consumptionByPlateNumber: 'Consumption'
@@ -237,8 +255,9 @@ export interface NexusGenFieldTypeNames {
     amount: 'Float'
     fuelInLiters: 'Float'
     fuelStationId: 'String'
-    fuelType: 'fuel_type_enum'
-    sourceId: 'Int'
+    fuelType: 'String'
+    id: 'Int'
+    sourceId: 'String'
     week: 'DateTime'
   }
 }
