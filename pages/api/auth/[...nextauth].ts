@@ -16,13 +16,6 @@ export const authOptions: NextAuthOptions = {
           where: {
             email: credentials.email,
           },
-          include: {
-            memberships: {
-              include: {
-                branchs: true,
-              },
-            },
-          },
         });
         if (!user) {
           return null;

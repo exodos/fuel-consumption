@@ -3,6 +3,8 @@ import { gql } from "@apollo/client";
 import SiteHeader from "@/components/layout/header";
 import { initializeApollo } from "@/lib/apollo";
 import ListConsumption from "@/components/consumption/list-consumption";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 const FeedConsumption = gql`
   query FeedConsumption(
@@ -29,20 +31,10 @@ const FeedConsumption = gql`
         paidAt
         debitAccountNumber
         creditAccountNumber
-        fuelStationId
         fuelStationRegion
         fuelStationName
-        fuelStationZone
-        fuelStationWoreda
-        fuelStationKebele
-        lastKiloMeter
-        reasonTypeName
-        reasonTypeCode
         firstName
-        middleName
-        lastName
         mobileNumber
-        sourceId
         companyId
         createdAt
         updatedAt
@@ -82,6 +74,22 @@ const ConsumptionPage = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/auth/signin",
+      },
+    };
+  } else if (session?.user?.adminResetPassword) {
+    return {
+      redirect: {
+        destination: "/auth/force-reset",
+        permanent: false,
+      },
+    };
+  }
   const { query } = context;
   const page = query.page || 1;
   const filter = query.search;

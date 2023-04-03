@@ -30,17 +30,32 @@ export default function App({
         refetchOnWindowFocus={true}
       >
         <NotificationContextProvider>
-          <MainLayout>
-            <Head>
-              <title>Fuel Consumption</title>
-              <meta name="description" content="Fuel Consumption" />
-              <meta
-                name="viewport"
-                content="initial-scale=1.0, width=device-width"
-              />
-            </Head>
-            <Component {...pageProps} />
-          </MainLayout>
+          {router.pathname.startsWith("/auth/signin") ||
+          router.pathname.startsWith("/auth/force-reset") ? (
+            <MainSignInLayout>
+              <Head>
+                <title>Fuel Tracking System</title>
+                <meta name="description" content="Fuel Tracking System" />
+                <meta
+                  name="viewport"
+                  content="initial-scale=1.0, width=device-width"
+                />
+              </Head>
+              <Component {...pageProps} />
+            </MainSignInLayout>
+          ) : (
+            <MainLayout>
+              <Head>
+                <title>Fuel Tracking System</title>
+                <meta name="description" content="Fuel Tracking System" />
+                <meta
+                  name="viewport"
+                  content="initial-scale=1.0, width=device-width"
+                />
+              </Head>
+              <Component {...pageProps} />
+            </MainLayout>
+          )}
         </NotificationContextProvider>
       </SessionProvider>
     </ApolloProvider>

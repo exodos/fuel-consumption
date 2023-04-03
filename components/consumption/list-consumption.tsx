@@ -1,9 +1,54 @@
+import { useLazyQuery } from "@apollo/client";
+import { gql } from "apollo-server-micro";
 import format from "date-fns/format";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { BiShow } from "react-icons/bi";
 import ReactPaginate from "react-paginate";
+import ReactTooltip from "react-tooltip";
+import ConsumptionDetails from "./detail-consumption";
+
+const FeedConsumption = gql`
+  query FeedConsumption($consumptionByIdId: Int!) {
+    consumptionById(id: $consumptionByIdId) {
+      id
+      transactionNumber
+      amount
+      fuelInLiters
+      fuelType
+      plateCode
+      plateRegion
+      plateNumber
+      paidAt
+      debitAccountNumber
+      creditAccountNumber
+      fuelStationId
+      fuelStationRegion
+      fuelStationName
+      fuelStationZone
+      fuelStationWoreda
+      fuelStationKebele
+      lastKiloMeter
+      reasonTypeName
+      reasonTypeCode
+      firstName
+      middleName
+      lastName
+      mobileNumber
+      sourceId
+      companyId
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 const ListConsumption = ({ consumptionData }) => {
   const router = useRouter();
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [detailList, setDetailtList] = useState([]);
+
+  // const { pathname } = useRouter();
 
   const handlePaginate = (page: any) => {
     const path = router.pathname;
@@ -13,6 +58,30 @@ const ListConsumption = ({ consumptionData }) => {
       pathname: path,
       query: query,
     });
+  };
+
+  const [
+    ConsumptionData,
+    {
+      loading: feedConsumptionLoading,
+      error: feedConsumptionError,
+      data: feedConsumptionData,
+    },
+  ] = useLazyQuery(FeedConsumption);
+
+  const handleDetails = async (id: any) => {
+    const consumptionD = await ConsumptionData({
+      variables: {
+        consumptionByIdId: id,
+      },
+    });
+
+    console.log(consumptionD?.data);
+
+    if (consumptionD?.data?.consumptionById) {
+      setShowDetailModal((prev) => !prev);
+      setDetailtList(consumptionD?.data?.consumptionById);
+    }
   };
 
   return (
@@ -59,18 +128,6 @@ const ListConsumption = ({ consumptionData }) => {
                         scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
-                        Plate Code
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Plate Region
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
                         Plate Number
                       </th>
                       <th
@@ -95,12 +152,6 @@ const ListConsumption = ({ consumptionData }) => {
                         scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
-                        Fuel Station Id
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
                         Fuel Station Region
                       </th>
                       <th
@@ -113,67 +164,13 @@ const ListConsumption = ({ consumptionData }) => {
                         scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
-                        Fuel Station Zone
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Fuel Station Wereda
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Fuel Station Kebele
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Last Kilo Meter
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Reason Type Name
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Reason Type Code
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
                         First Name
                       </th>
                       <th
                         scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
-                        Middle Name
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Last Name
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
                         Mobile Number
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Source Id
                       </th>
                       <th
                         scope="col"
@@ -193,6 +190,12 @@ const ListConsumption = ({ consumptionData }) => {
                       >
                         Updated At
                       </th>
+                      <th
+                        scope="col"
+                        className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                      >
+                        <span className="sr-only">Detail</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
@@ -209,19 +212,13 @@ const ListConsumption = ({ consumptionData }) => {
                             {item.amount}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.fuelInLiters}
+                            {item.fuelInLiters.toFixed(2)}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.fuelType}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.plateCode}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.plateRegion}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.plateNumber}
+                            {`${item.plateCode}${item.plateRegion}${item.plateNumber}`}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {format(new Date(item.paidAt), "MMM-dd-yyyy")}
@@ -233,46 +230,16 @@ const ListConsumption = ({ consumptionData }) => {
                             {item.creditAccountNumber}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.fuelStationId}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.fuelStationRegion}.{" "}
+                            {item.fuelStationRegion}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.fuelStationName}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.fuelStationZone}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.fuelStationWoreda}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.fuelStationKebele}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.lastKiloMeter}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.reasonTypeName}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.reasonTypeCode}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.firstName}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.middleName}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.lastName}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.mobileNumber}
-                          </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {item.sourceId}
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.companyId}
@@ -282,6 +249,31 @@ const ListConsumption = ({ consumptionData }) => {
                           </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {format(new Date(item.updatedAt), "MMM-dd-yyyy")}
+                          </td>
+                          <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                            <>
+                              <button
+                                onClick={() => {
+                                  handleDetails(item.id);
+                                }}
+                                className="text-indigo-600 hover:text-indigo-900"
+                                data-tip
+                                data-type="success"
+                                data-for="showDetails"
+                              >
+                                <BiShow
+                                  className="flex-shrink-0 h-5 w-5 text-gray-400"
+                                  aria-hidden="true"
+                                />
+                              </button>
+                              <ReactTooltip
+                                id="showDetails"
+                                place="top"
+                                effect="solid"
+                              >
+                                Show Details
+                              </ReactTooltip>
+                            </>
                           </td>
                         </tr>
                       ))}
@@ -323,6 +315,8 @@ const ListConsumption = ({ consumptionData }) => {
           </div>
         </div>
       </div>
+
+      {showDetailModal ? <ConsumptionDetails consumption={detailList} /> : null}
     </>
   );
 };

@@ -153,6 +153,25 @@ export const ConsumptionPagination = extendType({
   },
 });
 
+export const consumptionByIdQuery = extendType({
+  type: "Query",
+  definition(t) {
+    t.field("consumptionById", {
+      type: Consumption,
+      args: {
+        id: nonNull(intArg()),
+      },
+      resolve(_parent, args, ctx) {
+        return ctx.prisma.consumption.findFirst({
+          where: {
+            id: args.id,
+          },
+        });
+      },
+    });
+  },
+});
+
 export const consumptionByPlateNumberQuery = extendType({
   type: "Query",
   definition(t) {

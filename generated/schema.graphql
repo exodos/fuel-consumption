@@ -59,6 +59,12 @@ type FeedConsumption {
   totalConsumption: Int!
 }
 
+type FeedUser {
+  maxPage: Int
+  totalUser: Int!
+  user: [User!]!
+}
+
 type MonthlyConsumption {
   amount: Float
   fuelInLiters: Float
@@ -69,14 +75,51 @@ type MonthlyConsumption {
   sourceId: String
 }
 
+type Mutation {
+  adminChangeUserPassword(id: String!, password: String!): User!
+  changeUserPassword(currentPassword: String!, id: String!, password: String!): User!
+  createUser(input: userCreateInput!): User!
+  deleteUser(id: String!): User!
+  updateUser(input: userUpdateInput!, userId: String!): User!
+}
+
 type Query {
+  consumptionById(id: Int!): Consumption
   consumptionByPlateNumber(plateCode: String!, plateNumber: String!, plateRegion: String!): Consumption
   feedConsumption(filter: String, orderBy: [ConsumptionOrderByInput!], skip: Int, take: Int): FeedConsumption!
+  feedUser(filter: String, orderBy: [UserOrderByInput!], skip: Int, take: Int): FeedUser!
+  userByEmail(email: String!): User!
+  usersByID(userId: String!): User!
+}
+
+enum Role {
+  ADMIN
+  SUPERADMIN
+  USER
 }
 
 enum Sort {
   asc
   desc
+}
+
+type User {
+  adminResetPassword: Boolean
+  createdAt: DateTime
+  email: String
+  firstName: String
+  id: String
+  lastName: String
+  middleName: String
+  mobileNumber: String
+  password: String
+  role: Role
+  updatedAt: DateTime
+}
+
+input UserOrderByInput {
+  createdAt: Sort
+  updatedAt: Sort
 }
 
 type WeeklyConsumption {
@@ -87,4 +130,23 @@ type WeeklyConsumption {
   id: Int
   sourceId: String
   week: DateTime
+}
+
+input userCreateInput {
+  email: String
+  firstName: String
+  lastName: String
+  middleName: String
+  mobileNumber: String
+  password: String
+  role: Role
+}
+
+input userUpdateInput {
+  email: String
+  firstName: String
+  lastName: String
+  middleName: String
+  mobileNumber: String
+  role: Role
 }

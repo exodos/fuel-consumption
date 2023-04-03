@@ -25,6 +25,9 @@ type summaryData = {
   totalMonthlyTransaction: any;
   totalMonthlyPayment: any;
   totalCountSum: any;
+  totalDailyFuel: any;
+  totalWeeklyFuel: any;
+  totalMonthlyFuel: any;
 };
 
 const getLastSevenDays = () => {
@@ -92,6 +95,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     totalMonthlyTransaction: undefined,
     totalMonthlyPayment: undefined,
     totalCountSum: undefined,
+    totalDailyFuel: undefined,
+    totalWeeklyFuel: undefined,
+    totalMonthlyFuel: undefined,
   };
 
   try {
@@ -138,6 +144,45 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const tPayment = await prisma.dailyConsumption.aggregate({
+      _sum: {
+        amount: true,
+      },
+    });
+
+    const tTransactionWithSubsidy = await prisma.consumption.aggregate({
+      where: {
+        reasonTypeCode: "844",
+      },
+      _count: {
+        amount: true,
+      },
+    });
+
+    const tTransactionWithOutSubsidy = await prisma.consumption.aggregate({
+      where: {
+        NOT: {
+          reasonTypeCode: "844",
+        },
+      },
+      _count: {
+        amount: true,
+      },
+    });
+
+    const tPaymentWithSubsidy = await prisma.consumption.aggregate({
+      where: {
+        reasonTypeCode: "844",
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+    const tPaymentWithOutSubsidy = await prisma.consumption.aggregate({
+      where: {
+        NOT: {
+          reasonTypeCode: "844",
+        },
+      },
       _sum: {
         amount: true,
       },
@@ -209,6 +254,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     });
 
+    const tDailyFuelDaily = _.chain(dailyQuery)
+      .groupBy((tr) => format(new Date(tr.day), "EEE"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.fuelInLiters),
+          2
+        );
+      })
+      .mapValues((value, key) => ({ x: key, y: value }))
+      .values()
+      .value();
+
+    const totalDailyFuel = weekdays.map((day) => {
+      const data = tDailyFuelDaily.find((d) => d.x === day);
+      if (data) {
+        return data;
+      } else {
+        return { x: day, y: 0 };
+      }
+    });
+
     const tPaymentWeekly = _.chain(weeklyQuery)
       .groupBy((tr) => format(new Date(tr.week), "Io"))
       .mapValues((value) => {
@@ -223,6 +289,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const totalWeeklyPayment = weekYears.map((week) => {
       const data = tPaymentWeekly.find((d) => d.x === week);
+      if (data) {
+        return data;
+      } else {
+        return { x: week, y: 0 };
+      }
+    });
+
+    const tFuelWeekly = _.chain(weeklyQuery)
+      .groupBy((tr) => format(new Date(tr.week), "Io"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.fuelInLiters),
+          2
+        );
+      })
+      .mapValues((value, key) => ({ x: key, y: value }))
+      .values()
+      .value();
+
+    const totalWeeklyFuel = weekYears.map((week) => {
+      const data = tFuelWeekly.find((d) => d.x === week);
       if (data) {
         return data;
       } else {
@@ -248,17 +335,37 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     });
 
+    const tFuelMonthly = _.chain(monthlyQuery)
+      .groupBy((tr) => format(new Date(tr.month), "MMM"))
+      .mapValues((value) => {
+        return _.round(_.sumBy(value, (tr) => tr.fuelInLiters));
+      })
+      .mapValues((value, key) => ({ x: key, y: value }))
+      .values()
+      .value();
+
+    const totalMonthlyFuel = monthYears.map((month) => {
+      const data = tFuelMonthly.find((d) => d.x === month);
+      if (data) {
+        return data;
+      } else {
+        return { x: month, y: 0 };
+      }
+    });
+
     // daily
     summary.totalDailyTransaction = [
       { id: "Daily", data: totalDailyTransaction },
     ];
     summary.totalDailyPayment = [{ id: "Daily", data: totalDailyPayment }];
+    summary.totalDailyFuel = [{ id: "Daily", data: totalDailyFuel }];
 
     //weekly
     summary.totalWeeklyTransaction = [
       { id: "Weekly", data: totalWeeklyTransaction },
     ];
     summary.totalWeeklyPayment = [{ id: "Weekly", data: totalWeeklyPayment }];
+    summary.totalWeeklyFuel = [{ id: "Weekly", data: totalWeeklyFuel }];
 
     // monthly
     summary.totalMonthlyTransaction = [
@@ -267,6 +374,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     summary.totalMonthlyPayment = [
       { id: "Monthly", data: totalMonthlyPayment },
     ];
+
+    summary.totalMonthlyFuel = [{ id: "Monthly", data: totalMonthlyFuel }];
 
     summary.totalCountSum = [
       {
@@ -280,6 +389,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         id: 2,
         name: "Total Payment",
         data: Number(Math.round(tPayment._sum.amount).toFixed(1))
+          .toLocaleString()
+          .toString(),
+      },
+      {
+        id: 3,
+        name: "Totral Transaction Subsidy",
+        data: Number(
+          Math.round(tTransactionWithSubsidy._count.amount).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+      },
+      {
+        id: 4,
+        name: "Totral Transaction WithOut Subsidy",
+        data: Number(
+          Math.round(tTransactionWithOutSubsidy._count.amount).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+      },
+      {
+        id: 5,
+        name: "Total Payment With Subsidy",
+        data: Number(Math.round(tPaymentWithSubsidy._sum.amount).toFixed(1))
+          .toLocaleString()
+          .toString(),
+      },
+      {
+        id: 6,
+        name: "Total Payment WithOut Subsidy",
+        data: Number(Math.round(tPaymentWithOutSubsidy._sum.amount).toFixed(1))
           .toLocaleString()
           .toString(),
       },

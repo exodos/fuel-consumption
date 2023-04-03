@@ -25,7 +25,7 @@ type Props = {
 };
 
 const navigation = [
-  { name: "Dash Board", href: "/", icon: FaHome, current: true },
+  { name: "Dashboard", href: "/", icon: FaHome, current: true },
   {
     name: "Consumption",
     href: "/consumption",
@@ -35,9 +35,10 @@ const navigation = [
 ];
 
 const NavBar = ({ children }: Props) => {
-  const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dayTime, setDayTime] = useState("");
+  const { pathname } = useRouter();
+  
 
   const now = new Date();
   const router = useRouter();
@@ -144,7 +145,7 @@ const NavBar = ({ children }: Props) => {
                             <Link href={item.href} passHref legacyBehavior>
                               <a
                                 className={classNames(
-                                  item.current
+                                  item.href == pathname
                                     ? "bg-lightBlue text-white"
                                     : "text-black hover:bg-deepBlue hover:text-white",
                                   "group flex items-center rounded-md px-2 py-2 text-base font-medium"
@@ -214,7 +215,7 @@ const NavBar = ({ children }: Props) => {
                         <a
                           key={item.name}
                           className={classNames(
-                            item.current
+                            item.href == pathname
                               ? "bg-lightBlue text-white"
                               : "text-black hover:bg-deepBlue hover:text-white",
                             "group flex items-center rounded-md px-2 py-2 text-base font-medium"
@@ -318,7 +319,7 @@ const NavBar = ({ children }: Props) => {
 
                           <span className="ml-1 hidden text-sm font-medium text-gray-50 lg:block">
                             <span className="sr-only">Open user menu for </span>
-                            {session?.user?.firstName}
+                            {/* {session?.user?.firstName} */}
                           </span>
                           <ChevronDownIcon
                             className="ml-1 hidden h-5 w-5 flex-shrink-0 text-gray-800 lg:block"

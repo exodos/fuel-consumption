@@ -1,11 +1,32 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["views"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id @default(uuid())
+  firstName          String   @map("first_name")
+  middleName         String   @map("middle_name")
+  lastName           String   @map("last_name")
+  email              String   @unique @db.VarChar(250)
+  password           String
+  role               Role     @default(USER)
+  mobileNumber       String   @unique @map("mobile_number")
+  adminResetPassword Boolean  @default(true) @map("admin_reset_password")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+enum Role {
+  SUPERADMIN
+  USER
+  ADMIN
 }
 
 model Consumption {

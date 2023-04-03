@@ -1,9 +1,4 @@
-import { useSession } from "next-auth/react";
 import { hash, compare } from "bcryptjs";
-
-type GetUser = {
-  userId: string;
-};
 
 const hashPassword = async (password: any) => {
   const hashedPassword = await hash(password, 12);

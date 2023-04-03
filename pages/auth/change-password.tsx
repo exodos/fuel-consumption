@@ -44,9 +44,9 @@ const UsersByID = gql`
 `;
 
 const UserChangePassword = ({
-          data,
-          userId,
-        }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      data,
+      userId,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [userPassword, setUserPassword] = useState(data.usersByID.password);
   const router = useRouter();
   const notificationCtx = useContext(NotificationContext);
@@ -121,16 +121,14 @@ const UserChangePassword = ({
   return (
     <>
       <SiteHeader
-        title={"Third Party Insurance Change Password Page"}
-        content={"Third Party Insurance Change Password Page"}
+        title={"Fuel Tracking Change Password Page"}
+        content={"Fuel Tracking Change Password Page"}
       />
 
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
-
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex py-10 px-10 sm:px-8 lg:flex-none lg:px-40 xl:px-44">
             <div className="mx-auto w-full max-w-lg">
-              
               <div className="mt-10">
                 <Formik
                   initialValues={formValues || initialValues}

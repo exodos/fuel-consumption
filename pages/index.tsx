@@ -6,10 +6,12 @@ import DisplayDailyDashBoard from "@/components/dashboard/display-daily";
 import { useState } from "react";
 import DisplayWeeklyDashBoard from "@/components/dashboard/display-weekly";
 import DisplayMonthlyDashBoard from "@/components/dashboard/display-monthly";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 const Home = ({
-  dailyData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      dailyData,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     totalDailyTransaction,
     totalDailyPayment,
@@ -71,6 +73,22 @@ const Home = ({
 };
 
 export const getServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/auth/signin",
+      },
+    };
+  } else if (session?.user?.adminResetPassword) {
+    return {
+      redirect: {
+        destination: "/auth/force-reset",
+        permanent: false,
+      },
+    };
+  }
   let dailyData;
   try {
     let result = await fetch(baseUrl + `/api/dashboard/daily`);
@@ -78,7 +96,7 @@ export const getServerSideProps = async ({ req, res }) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-  console.log(dailyData);
+  // console.log(dailyData);
   return {
     props: {
       dailyData,

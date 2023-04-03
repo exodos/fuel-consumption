@@ -1,3 +1,23 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('SUPERADMIN', 'USER', 'ADMIN');
+
+-- CreateTable
+CREATE TABLE "user" (
+    "id" TEXT NOT NULL,
+    "first_name" TEXT NOT NULL,
+    "middle_name" TEXT NOT NULL,
+    "last_name" TEXT NOT NULL,
+    "email" VARCHAR(250) NOT NULL,
+    "password" TEXT NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'USER',
+    "mobile_number" TEXT NOT NULL,
+    "admin_reset_password" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateTable
 CREATE TABLE "consumption" (
     "id" SERIAL NOT NULL,
@@ -70,6 +90,12 @@ CREATE TABLE "monthly_consumption" (
 
     CONSTRAINT "monthly_consumption_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "user_mobile_number_key" ON "user"("mobile_number");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "daily_consumption_fuel_type_fuel_station_id_source_id_day_key" ON "daily_consumption"("fuel_type", "fuel_station_id", "source_id", "day");

@@ -33,9 +33,31 @@ export interface NexusGenInputs {
     createdAt?: NexusGenEnums['Sort'] | null; // Sort
     updatedAt?: NexusGenEnums['Sort'] | null; // Sort
   }
+  UserOrderByInput: { // input type
+    createdAt?: NexusGenEnums['Sort'] | null; // Sort
+    updatedAt?: NexusGenEnums['Sort'] | null; // Sort
+  }
+  userCreateInput: { // input type
+    email?: string | null; // String
+    firstName?: string | null; // String
+    lastName?: string | null; // String
+    middleName?: string | null; // String
+    mobileNumber?: string | null; // String
+    password?: string | null; // String
+    role?: NexusGenEnums['Role'] | null; // Role
+  }
+  userUpdateInput: { // input type
+    email?: string | null; // String
+    firstName?: string | null; // String
+    lastName?: string | null; // String
+    middleName?: string | null; // String
+    mobileNumber?: string | null; // String
+    role?: NexusGenEnums['Role'] | null; // Role
+  }
 }
 
 export interface NexusGenEnums {
+  Role: "ADMIN" | "SUPERADMIN" | "USER"
   Sort: "asc" | "desc"
 }
 
@@ -93,6 +115,11 @@ export interface NexusGenObjects {
     maxPage?: number | null; // Int
     totalConsumption: number; // Int!
   }
+  FeedUser: { // root type
+    maxPage?: number | null; // Int
+    totalUser: number; // Int!
+    user: NexusGenRootTypes['User'][]; // [User!]!
+  }
   MonthlyConsumption: { // root type
     amount?: number | null; // Float
     fuelInLiters?: number | null; // Float
@@ -102,7 +129,21 @@ export interface NexusGenObjects {
     month?: NexusGenScalars['DateTime'] | null; // DateTime
     sourceId?: string | null; // String
   }
+  Mutation: {};
   Query: {};
+  User: { // root type
+    adminResetPassword?: boolean | null; // Boolean
+    createdAt?: NexusGenScalars['DateTime'] | null; // DateTime
+    email?: string | null; // String
+    firstName?: string | null; // String
+    id?: string | null; // String
+    lastName?: string | null; // String
+    middleName?: string | null; // String
+    mobileNumber?: string | null; // String
+    password?: string | null; // String
+    role?: NexusGenEnums['Role'] | null; // Role
+    updatedAt?: NexusGenScalars['DateTime'] | null; // DateTime
+  }
   WeeklyConsumption: { // root type
     amount?: number | null; // Float
     fuelInLiters?: number | null; // Float
@@ -169,6 +210,11 @@ export interface NexusGenFieldTypes {
     maxPage: number | null; // Int
     totalConsumption: number; // Int!
   }
+  FeedUser: { // field return type
+    maxPage: number | null; // Int
+    totalUser: number; // Int!
+    user: NexusGenRootTypes['User'][]; // [User!]!
+  }
   MonthlyConsumption: { // field return type
     amount: number | null; // Float
     fuelInLiters: number | null; // Float
@@ -178,9 +224,33 @@ export interface NexusGenFieldTypes {
     month: NexusGenScalars['DateTime'] | null; // DateTime
     sourceId: string | null; // String
   }
+  Mutation: { // field return type
+    adminChangeUserPassword: NexusGenRootTypes['User']; // User!
+    changeUserPassword: NexusGenRootTypes['User']; // User!
+    createUser: NexusGenRootTypes['User']; // User!
+    deleteUser: NexusGenRootTypes['User']; // User!
+    updateUser: NexusGenRootTypes['User']; // User!
+  }
   Query: { // field return type
+    consumptionById: NexusGenRootTypes['Consumption'] | null; // Consumption
     consumptionByPlateNumber: NexusGenRootTypes['Consumption'] | null; // Consumption
     feedConsumption: NexusGenRootTypes['FeedConsumption']; // FeedConsumption!
+    feedUser: NexusGenRootTypes['FeedUser']; // FeedUser!
+    userByEmail: NexusGenRootTypes['User']; // User!
+    usersByID: NexusGenRootTypes['User']; // User!
+  }
+  User: { // field return type
+    adminResetPassword: boolean | null; // Boolean
+    createdAt: NexusGenScalars['DateTime'] | null; // DateTime
+    email: string | null; // String
+    firstName: string | null; // String
+    id: string | null; // String
+    lastName: string | null; // String
+    middleName: string | null; // String
+    mobileNumber: string | null; // String
+    password: string | null; // String
+    role: NexusGenEnums['Role'] | null; // Role
+    updatedAt: NexusGenScalars['DateTime'] | null; // DateTime
   }
   WeeklyConsumption: { // field return type
     amount: number | null; // Float
@@ -238,6 +308,11 @@ export interface NexusGenFieldTypeNames {
     maxPage: 'Int'
     totalConsumption: 'Int'
   }
+  FeedUser: { // field return type name
+    maxPage: 'Int'
+    totalUser: 'Int'
+    user: 'User'
+  }
   MonthlyConsumption: { // field return type name
     amount: 'Float'
     fuelInLiters: 'Float'
@@ -247,9 +322,33 @@ export interface NexusGenFieldTypeNames {
     month: 'DateTime'
     sourceId: 'String'
   }
+  Mutation: { // field return type name
+    adminChangeUserPassword: 'User'
+    changeUserPassword: 'User'
+    createUser: 'User'
+    deleteUser: 'User'
+    updateUser: 'User'
+  }
   Query: { // field return type name
+    consumptionById: 'Consumption'
     consumptionByPlateNumber: 'Consumption'
     feedConsumption: 'FeedConsumption'
+    feedUser: 'FeedUser'
+    userByEmail: 'User'
+    usersByID: 'User'
+  }
+  User: { // field return type name
+    adminResetPassword: 'Boolean'
+    createdAt: 'DateTime'
+    email: 'String'
+    firstName: 'String'
+    id: 'String'
+    lastName: 'String'
+    middleName: 'String'
+    mobileNumber: 'String'
+    password: 'String'
+    role: 'Role'
+    updatedAt: 'DateTime'
   }
   WeeklyConsumption: { // field return type name
     amount: 'Float'
@@ -263,7 +362,31 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    adminChangeUserPassword: { // args
+      id: string; // String!
+      password: string; // String!
+    }
+    changeUserPassword: { // args
+      currentPassword: string; // String!
+      id: string; // String!
+      password: string; // String!
+    }
+    createUser: { // args
+      input: NexusGenInputs['userCreateInput']; // userCreateInput!
+    }
+    deleteUser: { // args
+      id: string; // String!
+    }
+    updateUser: { // args
+      input: NexusGenInputs['userUpdateInput']; // userUpdateInput!
+      userId: string; // String!
+    }
+  }
   Query: {
+    consumptionById: { // args
+      id: number; // Int!
+    }
     consumptionByPlateNumber: { // args
       plateCode: string; // String!
       plateNumber: string; // String!
@@ -274,6 +397,18 @@ export interface NexusGenArgTypes {
       orderBy?: NexusGenInputs['ConsumptionOrderByInput'][] | null; // [ConsumptionOrderByInput!]
       skip?: number | null; // Int
       take?: number | null; // Int
+    }
+    feedUser: { // args
+      filter?: string | null; // String
+      orderBy?: NexusGenInputs['UserOrderByInput'][] | null; // [UserOrderByInput!]
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    }
+    userByEmail: { // args
+      email: string; // String!
+    }
+    usersByID: { // args
+      userId: string; // String!
     }
   }
 }
