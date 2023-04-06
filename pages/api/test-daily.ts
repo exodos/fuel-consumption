@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import nc from "next-connect";
+import { authOptions } from "./auth/[...nextauth]";
 import _ from "lodash";
 import {
   startOfToday,
@@ -10,7 +11,6 @@ import {
   eachDayOfInterval,
 } from "date-fns";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "../auth/[...nextauth]";
 
 type dailyData = {
   totalDailyTransaction: any;
@@ -39,15 +39,15 @@ const handler = nc<NextApiRequest, NextApiResponse>({
     res.status(404).end("Page is not found");
   },
 })
-  // .use(async (req, res, next) => {
-  //   const session = await getServerSession(req, res, authOptions);
+  .use(async (req, res, next) => {
+    const session = await getServerSession(req, res, authOptions);
 
-  //   if (!session) {
-  //     res.status(401).json({ message: "unauthenticated" });
-  //   } else {
-  //     next();
-  //   }
-  // })
+    if (!session) {
+      res.status(401).json({ message: "unauthenticated" });
+    } else {
+      next();
+    }
+  })
   .get(async (req, res, next) => {
     const weekdays = getLastSevenDays();
     const endD = endOfToday();
@@ -60,6 +60,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       totalDailyFuel: undefined,
     };
 
+    const session = await getServerSession(req, res, authOptions);
+    console.log(session);
     const dailyQuery = await prisma.dailyConsumption.findMany({
       where: {
         day: {

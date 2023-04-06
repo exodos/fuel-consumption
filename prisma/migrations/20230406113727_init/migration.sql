@@ -61,6 +61,9 @@ CREATE TABLE "daily_consumption" (
     "fuel_station_id" TEXT NOT NULL,
     "day" TIMESTAMP(3) NOT NULL,
     "source_id" TEXT NOT NULL,
+    "fuel_station_region" TEXT NOT NULL,
+    "company_id" TEXT NOT NULL,
+    "transaction_count" INTEGER NOT NULL,
 
     CONSTRAINT "daily_consumption_pkey" PRIMARY KEY ("id")
 );
@@ -74,6 +77,9 @@ CREATE TABLE "weekly_consumption" (
     "fuel_station_id" TEXT NOT NULL,
     "week" TIMESTAMP(3) NOT NULL,
     "source_id" TEXT NOT NULL,
+    "fuel_station_region" TEXT NOT NULL,
+    "company_id" TEXT NOT NULL,
+    "transaction_count" INTEGER NOT NULL,
 
     CONSTRAINT "weekly_consumption_pkey" PRIMARY KEY ("id")
 );
@@ -87,6 +93,9 @@ CREATE TABLE "monthly_consumption" (
     "fuel_station_id" TEXT NOT NULL,
     "month" TIMESTAMP(3) NOT NULL,
     "source_id" TEXT NOT NULL,
+    "fuel_station_region" TEXT NOT NULL,
+    "company_id" TEXT NOT NULL,
+    "transaction_count" INTEGER NOT NULL,
 
     CONSTRAINT "monthly_consumption_pkey" PRIMARY KEY ("id")
 );

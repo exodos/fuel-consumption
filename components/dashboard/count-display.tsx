@@ -3,9 +3,9 @@ const DisplayCount = ({ totalCountSum }) => {
     <>
       {/* <div> */}
       <dl className="mt-3 mx-auto grid grid-cols-1 gap-x-6 gap-y-15 sm:grid-cols-1 sm:gap-y-16 lg:max-w-none lg:grid-cols-2 lg:gap-x-8">
-        {totalCountSum.map((item) => (
+        {totalCountSum?.map((item: any, i: any) => (
           <div
-            key={item.id}
+            key={i}
             className="border bg-white border-gray-300 rounded-xl p-6"
           >
             <dt className="text-gray-500 text-center">{item.name}</dt>

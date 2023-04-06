@@ -44,9 +44,9 @@ const UsersByID = gql`
 `;
 
 const ForceResetPassword = ({
-  data,
-  userId,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      data,
+      userId,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [userPassword, setUserPassword] = useState(data.usersByID.password);
   const router = useRouter();
   const notificationCtx = useContext(NotificationContext);
@@ -141,9 +141,9 @@ const ForceResetPassword = ({
           <div className="relative lg:w-2/4">
             <div className="mt-10">
               <div className="sm:flex sm:items-center">
-                <div className="sm:flex-initial">
+                <div className="sm:flex-initial sm:ml-8">
                   <Image
-                    className="h-28 w-auto"
+                    className="h-20 w-auto"
                     src={"/logos/ethio-logo.svg"}
                     alt="Ethiotelecom logo"
                     width={350}
@@ -159,10 +159,9 @@ const ForceResetPassword = ({
                   height={90}
                 /> */}
                 </div>
-
-                <div className="sm:mt-0 sm:ml-16 sm:flex-none">
+                <div className="sm:mt-0 sm:mr-8 sm:flex-none">
                   <Image
-                    className="h-24 w-auto"
+                    className="h-16 w-auto"
                     src={"/logos/telebirr-logo.svg"}
                     alt="TeleBirr logo"
                     width={350}
@@ -171,11 +170,10 @@ const ForceResetPassword = ({
                 </div>
               </div>
             </div>
-
             <div className="flex py-10 px-10 sm:px-9 lg:flex-none lg:px-40 xl:px-44">
-              <div className="mt-10 mx-20">
-                <div className="mt-1 pb-10">
-                  <h1 className="text-deepGreen font-bold text-3xl">
+              <div className="mt-10 mx-10">
+                <div className="mt-1">
+                  <h1 className="text-lightGreen font-bold text-3xl">
                     You must change your password
                   </h1>
                 </div>
@@ -268,7 +266,7 @@ const ForceResetPassword = ({
                   <div className="pt-4">
                     <button
                       type="submit"
-                      className="flex w-full justify-center rounded-lg border border-transparent bg-lightGreen py-3 px-2 text-base font-semibold text-white shadow-sm hover:bg-deepGreen focus:outline-none focus:ring-2 focus:ring-darkGrayHv focus:ring-offset-2"
+                      className="flex w-full justify-center rounded-3xl border border-transparent bg-lightGreen py-3 px-2 text-base font-semibold text-white shadow-sm hover:bg-deepGreen focus:outline-none focus:ring-2 focus:ring-darkGrayHv focus:ring-offset-2"
                     >
                       Reset
                     </button>

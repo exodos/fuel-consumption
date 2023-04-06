@@ -33,7 +33,7 @@ const FeedConsumption = gql`
         creditAccountNumber
         fuelStationRegion
         fuelStationName
-        firstName
+        # firstName
         mobileNumber
         companyId
         createdAt

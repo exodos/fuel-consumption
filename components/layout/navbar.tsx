@@ -35,10 +35,11 @@ const navigation = [
 ];
 
 const NavBar = ({ children }: Props) => {
+  const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dayTime, setDayTime] = useState("");
   const { pathname } = useRouter();
-  
+  const [search, setSearch] = useState("");
 
   const now = new Date();
   const router = useRouter();
@@ -58,17 +59,18 @@ const NavBar = ({ children }: Props) => {
     }
   };
 
-  const handleSearch = (event) => {
+  const handleSearch = (search) => {
     // event.preventDefault();
-    if (event.key === "Enter") {
-      const path = router.pathname;
-      const query = router.query;
-      query.search = event.target.value;
-      router.push({
-        pathname: path,
-        query: query,
-      });
-    }
+    // setSearch(event.target.value);
+    // if (event.key === "Enter") {
+    const path = router.pathname;
+    const query = router.query;
+    query.search = search;
+    router.push({
+      pathname: path,
+      query: query,
+    });
+    // }
   };
 
   return (
@@ -178,7 +180,7 @@ const NavBar = ({ children }: Props) => {
                                 priority
                               />
                             </div>
-                          </div>
+                          </div>{" "}
                         </a>
                       </Link>
                     </div>
@@ -260,7 +262,7 @@ const NavBar = ({ children }: Props) => {
                 <div className="flex items-center lg:ml-12">
                   <div className="hidden lg:block">
                     <h1 className="ml-3 text-xl font-bold leading-7 text-gray-50 sm:truncate sm:leading-9 capitalize">
-                      {/* {dayTime}, {session?.user?.firstName} */}
+                      {dayTime}, {session?.user?.firstName}
                       {/* {session?.user?.lastName} */}
                     </h1>
                   </div>
@@ -295,9 +297,15 @@ const NavBar = ({ children }: Props) => {
                           className="block h-full w-full border-transparent py-2 pl-10 pr-5 ml-4 text-gray-900 bg-gray-100 placeholder-gray-500 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm rounded-2xl"
                           placeholder="Enter your keywords ..."
                           type="search"
-                          onKeyDown={() => {
-                            handleSearch(event);
+                          onChange={(e) => {
+                            // setSearch(e.currentTarget.value);
+                            handleSearch(e.currentTarget.value);
                           }}
+                          // onKeyDown={(event) => {
+                          //   setSearch(event.currentTarget.value);
+                          //   handleSearch(search);
+                          // }}
+                          // onChange={(e) => setSearch(e.target.value)}
                         />
                       </div>
                     </div>
@@ -319,7 +327,7 @@ const NavBar = ({ children }: Props) => {
 
                           <span className="ml-1 hidden text-sm font-medium text-gray-50 lg:block">
                             <span className="sr-only">Open user menu for </span>
-                            {/* {session?.user?.firstName} */}
+                            {session?.user?.firstName}
                           </span>
                           <ChevronDownIcon
                             className="ml-1 hidden h-5 w-5 flex-shrink-0 text-gray-800 lg:block"

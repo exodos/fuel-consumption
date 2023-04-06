@@ -1,5 +1,4 @@
 import { DateTimeResolver } from "graphql-scalars";
-import { Prisma } from "@prisma/client";
 import {
   arg,
   asNexusMethod,
@@ -12,6 +11,8 @@ import {
   objectType,
   stringArg,
 } from "nexus";
+import { changePhone } from "@/lib/config";
+import { Prisma } from "@prisma/client";
 
 export const GQLDate = asNexusMethod(DateTimeResolver, "date");
 
@@ -61,67 +62,68 @@ export const ConsumptionPagination = extendType({
         orderBy: arg({ type: list(nonNull(ConsumptionOrderByInput)) }),
       },
       resolve: async (_parent, args, ctx) => {
-        // let where = {};
-        // if (args.filter) {
-        //   if (typeof args.filter.slice(0, 1) === "number") {
-        //     where = {
-        //       OR: [
-        //         { transactionNumber: args.filter },
-        //         { mobileNumber: args.filter },
-        //         {
-        //           AND: [
-        //             {
-        //               plateCode: args?.filter.slice(0, 1),
-        //             },
-        //             {
-        //               plateRegion: plate_region_enum[args?.filter?.slice(1, 3)],
-        //             },
-        //             {
-        //               plateNumber: args?.filter?.slice(3),
-        //             },
-        //           ],
-        //         },
-        //       ],
-        //     };
-        //   } else {
-        //     where = {
-        //       OR: [
-        //         { transactionNumber: args.filter },
-        //         { mobileNumber: args.filter },
-        //         {
-        //           plateNumber: {
-        //             contains: args.filter,
-        //           },
-        //         },
-        //       ],
-        //     };
-        //   }
-        // }
-
-        const where = args.filter
+        const where: Prisma.ConsumptionWhereInput = args.filter
           ? {
-              // OR: [
-              //   { transactionNumber: args.filter },
-              //   { mobileNumber: args.filter },
-              //   {
-              //     plateNumber: {
-              //       contains: args.filter,
-              //     },
-              //   },
-              // ],
               OR: [
-                { transactionNumber: args.filter },
-                { mobileNumber: args.filter },
+                {
+                  transactionNumber: {
+                    equals: args.filter,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  mobileNumber: {
+                    equals: changePhone(args.filter),
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  plateNumber: {
+                    contains: args.filter.toLowerCase(),
+                    mode: "insensitive",
+                  },
+                },
                 {
                   AND: [
                     {
-                      plateCode: args?.filter.slice(0, 1),
+                      plateCode: {
+                        contains: args?.filter.slice(0, 1),
+                        mode: "insensitive",
+                      },
                     },
                     {
-                      plateRegion: args?.filter?.slice(1, 3),
+                      plateRegion: {
+                        contains: args?.filter?.slice(1, 3),
+                        mode: "insensitive",
+                      },
                     },
                     {
-                      plateNumber: args?.filter?.slice(3),
+                      plateNumber: {
+                        contains: args?.filter?.slice(3),
+                        mode: "insensitive",
+                      },
+                    },
+                  ],
+                },
+                {
+                  AND: [
+                    {
+                      plateCode: {
+                        contains: args?.filter.slice(0, 2),
+                        mode: "insensitive",
+                      },
+                    },
+                    {
+                      plateRegion: {
+                        contains: args?.filter?.slice(2, 4),
+                        mode: "insensitive",
+                      },
+                    },
+                    {
+                      plateNumber: {
+                        contains: args?.filter?.slice(4),
+                        mode: "insensitive",
+                      },
                     },
                   ],
                 },

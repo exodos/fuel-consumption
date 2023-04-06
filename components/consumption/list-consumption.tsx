@@ -160,12 +160,12 @@ const ListConsumption = ({ consumptionData }) => {
                       >
                         Fuel Station Name
                       </th>
-                      <th
+                      {/* <th
                         scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                       >
                         First Name
-                      </th>
+                      </th> */}
                       <th
                         scope="col"
                         className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -235,9 +235,9 @@ const ListConsumption = ({ consumptionData }) => {
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.fuelStationName}
                           </td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {/* <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.firstName}
-                          </td>
+                          </td> */}
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {item.mobileNumber}
                           </td>

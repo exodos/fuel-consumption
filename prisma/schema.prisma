@@ -23,12 +23,6 @@ model User {
   @@map("user")
 }
 
-enum Role {
-  SUPERADMIN
-  USER
-  ADMIN
-}
-
 model Consumption {
   id                  Int      @default(autoincrement())
   transactionNumber   String   @map("transaction_number")
@@ -64,40 +58,55 @@ model Consumption {
 }
 
 model DailyConsumption {
-  id            Int      @id @default(autoincrement())
-  amount        Float    @db.DoublePrecision
-  fuelInLiters  Float    @map("fuel_in_liters") @db.DoublePrecision
-  fuelType      String   @map("fuel_type")
-  fuelStationId String   @map("fuel_station_id")
-  day           DateTime
-  sourceId      String   @map("source_id")
+  id                Int      @id @default(autoincrement())
+  amount            Float    @db.DoublePrecision
+  fuelInLiters      Float    @map("fuel_in_liters") @db.DoublePrecision
+  fuelType          String   @map("fuel_type")
+  fuelStationId     String   @map("fuel_station_id")
+  day               DateTime
+  sourceId          String   @map("source_id")
+  fuelStationRegion String   @map("fuel_station_region")
+  companyId         String   @map("company_id")
+  transactionCount  Int      @map("transaction_count")
 
   @@unique([fuelType, fuelStationId, sourceId, day])
   @@map("daily_consumption")
 }
 
 model WeeklyConsumption {
-  id            Int      @id @default(autoincrement())
-  amount        Float    @db.DoublePrecision
-  fuelInLiters  Float    @map("fuel_in_liters")
-  fuelType      String   @map("fuel_type")
-  fuelStationId String   @map("fuel_station_id")
-  week          DateTime
-  sourceId      String   @map("source_id")
+  id                Int      @id @default(autoincrement())
+  amount            Float    @db.DoublePrecision
+  fuelInLiters      Float    @map("fuel_in_liters")
+  fuelType          String   @map("fuel_type")
+  fuelStationId     String   @map("fuel_station_id")
+  week              DateTime
+  sourceId          String   @map("source_id")
+  fuelStationRegion String   @map("fuel_station_region")
+  companyId         String   @map("company_id")
+  transactionCount  Int      @map("transaction_count")
 
   @@unique([fuelType, fuelStationId, sourceId, week])
   @@map("weekly_consumption")
 }
 
 model MonthlyConsumption {
-  id            Int      @id @default(autoincrement())
-  amount        Float    @db.DoublePrecision
-  fuelInLiters  Float    @map("fuel_in_liters")
-  fuelType      String   @map("fuel_type")
-  fuelStationId String   @map("fuel_station_id")
-  month         DateTime
-  sourceId      String   @map("source_id")
+  id                Int      @id @default(autoincrement())
+  amount            Float    @db.DoublePrecision
+  fuelInLiters      Float    @map("fuel_in_liters")
+  fuelType          String   @map("fuel_type")
+  fuelStationId     String   @map("fuel_station_id")
+  month             DateTime
+  sourceId          String   @map("source_id")
+  fuelStationRegion String   @map("fuel_station_region")
+  companyId         String   @map("company_id")
+  transactionCount  Int      @map("transaction_count")
 
   @@unique([fuelType, fuelStationId, sourceId, month])
   @@map("monthly_consumption")
+}
+
+enum Role {
+  SUPERADMIN
+  USER
+  ADMIN
 }

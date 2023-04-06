@@ -103,12 +103,15 @@ export interface NexusGenObjects {
   }
   DailyConsumption: { // root type
     amount?: number | null; // Float
+    companyId?: string | null; // String
     day?: NexusGenScalars['DateTime'] | null; // DateTime
     fuelInLiters?: number | null; // Float
     fuelStationId?: string | null; // String
+    fuelStationRegion?: string | null; // String
     fuelType?: string | null; // String
     id?: number | null; // Int
     sourceId?: string | null; // String
+    transactionCount?: number | null; // Int
   }
   FeedConsumption: { // root type
     consumptions: NexusGenRootTypes['Consumption'][]; // [Consumption!]!
@@ -198,12 +201,15 @@ export interface NexusGenFieldTypes {
   }
   DailyConsumption: { // field return type
     amount: number | null; // Float
+    companyId: string | null; // String
     day: NexusGenScalars['DateTime'] | null; // DateTime
     fuelInLiters: number | null; // Float
     fuelStationId: string | null; // String
+    fuelStationRegion: string | null; // String
     fuelType: string | null; // String
     id: number | null; // Int
     sourceId: string | null; // String
+    transactionCount: number | null; // Int
   }
   FeedConsumption: { // field return type
     consumptions: NexusGenRootTypes['Consumption'][]; // [Consumption!]!
@@ -296,12 +302,15 @@ export interface NexusGenFieldTypeNames {
   }
   DailyConsumption: { // field return type name
     amount: 'Float'
+    companyId: 'String'
     day: 'DateTime'
     fuelInLiters: 'Float'
     fuelStationId: 'String'
+    fuelStationRegion: 'String'
     fuelType: 'String'
     id: 'Int'
     sourceId: 'String'
+    transactionCount: 'Int'
   }
   FeedConsumption: { // field return type name
     consumptions: 'Consumption'

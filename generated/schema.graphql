@@ -40,12 +40,15 @@ input ConsumptionOrderByInput {
 
 type DailyConsumption {
   amount: Float
+  companyId: String
   day: DateTime
   fuelInLiters: Float
   fuelStationId: String
+  fuelStationRegion: String
   fuelType: String
   id: Int
   sourceId: String
+  transactionCount: Int
 }
 
 """

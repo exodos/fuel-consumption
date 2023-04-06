@@ -12,6 +12,9 @@ export const DailyConsumption = objectType({
     t.string("fuelType");
     t.date("day");
     t.string("sourceId");
+    t.string("fuelStationRegion");
+    t.string("companyId");
+    t.int("transactionCount");
   },
 });
 

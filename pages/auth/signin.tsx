@@ -41,14 +41,14 @@ const SignIn = ({
           </div>
           <div className="relative lg:w-2/4">
             <div className="mt-10">
-              <div className="sm:flex sm:items-center">
-                <div className="sm:flex-initial">
+              <div className="sm:flex sm:ml-5 sm:items-center">
+                <div className="sm:flex-initial sm:ml-8">
                   <Image
-                    className="h-28 w-auto"
+                    className="h-20 w-auto"
                     src={"/logos/ethio-logo.svg"}
                     alt="Ethiotelecom logo"
-                    width={350}
-                    height={120}
+                    width={0}
+                    height={0}
                   />
                 </div>
                 <div className="sm:flex-auto">
@@ -61,9 +61,9 @@ const SignIn = ({
                 /> */}
                 </div>
 
-                <div className="sm:mt-0 sm:ml-16 sm:flex-none">
+                <div className="sm:mt-0 sm:mr-8 sm:flex-none">
                   <Image
-                    className="h-24 w-auto"
+                    className="h-16 w-auto"
                     src={"/logos/telebirr-logo.svg"}
                     alt="TeleBirr logo"
                     width={350}
@@ -72,17 +72,16 @@ const SignIn = ({
                 </div>
               </div>
             </div>
-
             <div className="flex py-10 px-10 sm:px-9 lg:flex-none lg:px-40 xl:px-44">
-              <div className="mt-10 mx-20">
-                <div className="mt-1 pb-10">
-                  <h1 className="text-deepGreen font-bold text-3xl">
-                    Fuel Tracking System
+              <div className="mt-10 mx-10">
+                <div className="mt-1">
+                  <h1 className="text-lightGreen font-bold text-3xl">
+                    Fuel Consumption Tracking System
                   </h1>
                 </div>
               </div>
             </div>
-            <div className="mt-2 justify-center items-center mx-40">
+            <div className="mt-2 justify-center items-center mx-48">
               <Formik
                 initialValues={{ email: "", password: "" }}
                 validationSchema={validate}
@@ -104,7 +103,7 @@ const SignIn = ({
                 }}
               >
                 {(formik) => (
-                  <form onSubmit={formik.handleSubmit} className="space-y-2">
+                  <form onSubmit={formik.handleSubmit} className="space-y-4">
                     <div>
                       <label
                         htmlFor="email"
@@ -163,19 +162,14 @@ const SignIn = ({
                         type="hidden"
                         defaultValue={csrfToken}
                       />
-                      <div className="text-red-400 text-md text-center rounded p-2">
+                      <div className="text-red-400 text-md text-center rounded p-1">
                         {error && <SignInError error={error} />}
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center"></div>
-                    </div>
-
-                    <div className="pt-4">
+                    <div className="pt-1">
                       <button
                         type="submit"
-                        className="flex w-full justify-center rounded-lg border border-transparent bg-lightGreen py-3 px-2 text-base font-semibold text-white shadow-sm hover:bg-deepGreen focus:outline-none focus:ring-2 focus:ring-darkGrayHv focus:ring-offset-2"
+                        className="flex w-full justify-center rounded-3xl border border-transparent bg-lightGreen py-4 px-2 text-base font-semibold text-white shadow-sm hover:bg-deepGreen focus:outline-none focus:ring-2 focus:ring-darkGrayHv focus:ring-offset-2"
                       >
                         {formik.isSubmitting ? "Please wait..." : "Sign In"}
                       </button>

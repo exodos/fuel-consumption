@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import { prisma } from "../../../lib/prisma";
+import { User } from "@prisma/client";
 import { verifyPassword } from "../../../lib/auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -12,7 +13,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const user = await prisma.user.findFirst({
+        const user: User = await prisma.user.findFirst({
           where: {
             email: credentials.email,
           },
