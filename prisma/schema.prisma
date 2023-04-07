@@ -24,34 +24,34 @@ model User {
 }
 
 model Consumption {
-  id                  Int      @default(autoincrement())
-  transactionNumber   String   @map("transaction_number")
-  amount              Float
-  fuelInLiters        Float    @map("fuel_in_liters")
-  fuelType            String   @map("fuel_type")
-  plateCode           String   @map("plate_code")
-  plateRegion         String   @map("plate_region")
-  plateNumber         String   @map("plate_number")
-  paidAt              DateTime @map("paid_at")
-  debitAccountNumber  String   @map("debit_account_number")
-  creditAccountNumber String   @map("credit_account_number")
-  fuelStationId       String   @map("fuel_station_id")
-  fuelStationRegion   String   @map("fuel_station_region")
-  fuelStationName     String   @map("fuel_station_name")
-  fuelStationZone     String   @map("fuel_station_zone")
-  fuelStationWoreda   String   @map("fuel_station_woreda")
-  fuelStationKebele   String   @map("fuel_station_kebele")
-  lastKiloMeter       Int      @map("last_kilometer")
-  reasonTypeName      String   @map("reason_type_name")
-  reasonTypeCode      String   @map("reason_type_code")
-  firstName           String   @map("first_name")
-  middleName          String   @map("middle_name")
-  lastName            String   @map("last_name")
-  mobileNumber        String   @map("mobile_number")
-  sourceId            String   @map("source_id")
-  companyId           String   @map("company_id")
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  id                  Int       @default(autoincrement())
+  transactionNumber   String    @map("transaction_number")
+  amount              Float?
+  fuelInLiters        Float?    @map("fuel_in_liters")
+  fuelType            String?   @map("fuel_type")
+  plateCode           String    @map("plate_code")
+  plateRegion         String    @map("plate_region")
+  plateNumber         String    @map("plate_number")
+  paidAt              DateTime? @map("paid_at")
+  debitAccountNumber  String?   @map("debit_account_number")
+  creditAccountNumber String?   @map("credit_account_number")
+  fuelStationId       String?   @map("fuel_station_id")
+  fuelStationRegion   String?   @map("fuel_station_region")
+  fuelStationName     String?   @map("fuel_station_name")
+  fuelStationZone     String?   @map("fuel_station_zone")
+  fuelStationWoreda   String?   @map("fuel_station_woreda")
+  fuelStationKebele   String?   @map("fuel_station_kebele")
+  lastKiloMeter       Int?      @map("last_kilometer")
+  reasonTypeName      String?   @map("reason_type_name")
+  reasonTypeCode      String?   @map("reason_type_code")
+  firstName           String?   @map("first_name")
+  middleName          String?   @map("middle_name")
+  lastName            String?   @map("last_name")
+  mobileNumber        String?   @map("mobile_number")
+  sourceId            String    @map("source_id")
+  companyId           String    @map("company_id")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
   @@id([transactionNumber, plateCode, plateRegion, plateNumber])
   @@map("consumption")
@@ -59,15 +59,15 @@ model Consumption {
 
 model DailyConsumption {
   id                Int      @id @default(autoincrement())
-  amount            Float
-  fuelInLiters      Float    @map("fuel_in_liters")
-  fuelType          String   @map("fuel_type")
-  fuelStationId     String   @map("fuel_station_id")
+  amount            Float?
+  fuelInLiters      Float?   @map("fuel_in_liters")
+  fuelType          String?  @map("fuel_type")
+  fuelStationId     String?  @map("fuel_station_id")
   day               DateTime
-  sourceId          String   @map("source_id")
-  fuelStationRegion String   @map("fuel_station_region")
-  companyId         String   @map("company_id")
-  transactionCount  Int      @map("transaction_count")
+  sourceId          String?  @map("source_id")
+  fuelStationRegion String?  @map("fuel_station_region")
+  companyId         String?  @map("company_id")
+  transactionCount  Int?     @map("transaction_count")
 
   @@unique([fuelType, fuelStationId, sourceId, day])
   @@map("daily_consumption")
@@ -75,31 +75,31 @@ model DailyConsumption {
 
 model WeeklyConsumption {
   id                Int      @id @default(autoincrement())
-  amount            Float
-  fuelInLiters      Float    @map("fuel_in_liters")
-  fuelType          String   @map("fuel_type")
-  fuelStationId     String   @map("fuel_station_id")
+  amount            Float?
+  fuelInLiters      Float?   @map("fuel_in_liters")
+  fuelType          String?  @map("fuel_type")
+  fuelStationId     String?  @map("fuel_station_id")
   week              DateTime
-  sourceId          String   @map("source_id")
-  fuelStationRegion String   @map("fuel_station_region")
-  companyId         String   @map("company_id")
-  transactionCount  Int      @map("transaction_count")
+  sourceId          String?  @map("source_id")
+  fuelStationRegion String?  @map("fuel_station_region")
+  companyId         String?  @map("company_id")
+  transactionCount  Int?     @map("transaction_count")
 
   @@unique([fuelType, fuelStationId, sourceId, week])
   @@map("weekly_consumption")
 }
 
 model MonthlyConsumption {
-  id                Int      @id @default(autoincrement())
-  amount            Float
-  fuelInLiters      Float    @map("fuel_in_liters")
-  fuelType          String   @map("fuel_type")
-  fuelStationId     String   @map("fuel_station_id")
-  month             DateTime
-  sourceId          String   @map("source_id")
-  fuelStationRegion String   @map("fuel_station_region")
-  companyId         String   @map("company_id")
-  transactionCount  Int      @map("transaction_count")
+  id                Int       @id @default(autoincrement())
+  amount            Float?
+  fuelInLiters      Float?    @map("fuel_in_liters")
+  fuelType          String?   @map("fuel_type")
+  fuelStationId     String?   @map("fuel_station_id")
+  month             DateTime?
+  sourceId          String?   @map("source_id")
+  fuelStationRegion String?   @map("fuel_station_region")
+  companyId         String?   @map("company_id")
+  transactionCount  Int?      @map("transaction_count")
 
   @@unique([fuelType, fuelStationId, sourceId, month])
   @@map("monthly_consumption")
