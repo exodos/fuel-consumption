@@ -72,9 +72,15 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       },
     });
 
+    // const tTransaction = await prisma.dailyConsumption.aggregate({
+    //   _count: {
+    //     amount: true,
+    //   },
+    // });
+
     const tTransaction = await prisma.dailyConsumption.aggregate({
-      _count: {
-        amount: true,
+      _sum: {
+        transactionCount: true,
       },
     });
 
@@ -197,7 +203,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       {
         id: 1,
         name: "Total Transaction",
-        data: Number(Math.round(tTransaction._count.amount).toFixed(1))
+        data: Number(Math.round(tTransaction._sum.transactionCount).toFixed(1))
           .toLocaleString()
           .toString(),
       },
@@ -210,7 +216,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       },
       {
         id: 3,
-        name: "Totral Transaction With Subsidy",
+        name: "Total Transaction With Subsidy",
         data: Number(
           Math.round(tTransactionWithSubsidy._count.amount).toFixed(1)
         )
@@ -226,7 +232,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       },
       {
         id: 5,
-        name: "Totral Transaction WithOut Subsidy",
+        name: "Total Transaction WithOut Subsidy",
         data: Number(
           Math.round(tTransactionWithOutSubsidy._count.amount).toFixed(1)
         )
@@ -241,9 +247,6 @@ const handler = nc<NextApiRequest, NextApiResponse>({
           .toString(),
       },
     ];
-
-    // totalTransaction: tTransaction._count.amount,
-    // totalPayment: tPayment._sum.amount,
 
     res.status(200).json(dailySummary);
   });

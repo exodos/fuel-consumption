@@ -26,8 +26,8 @@ model User {
 model Consumption {
   id                  Int      @default(autoincrement())
   transactionNumber   String   @map("transaction_number")
-  amount              Float    @db.DoublePrecision
-  fuelInLiters        Float    @map("fuel_in_liters") @db.DoublePrecision
+  amount              Float
+  fuelInLiters        Float    @map("fuel_in_liters")
   fuelType            String   @map("fuel_type")
   plateCode           String   @map("plate_code")
   plateRegion         String   @map("plate_region")
@@ -59,8 +59,8 @@ model Consumption {
 
 model DailyConsumption {
   id                Int      @id @default(autoincrement())
-  amount            Float    @db.DoublePrecision
-  fuelInLiters      Float    @map("fuel_in_liters") @db.DoublePrecision
+  amount            Float
+  fuelInLiters      Float    @map("fuel_in_liters")
   fuelType          String   @map("fuel_type")
   fuelStationId     String   @map("fuel_station_id")
   day               DateTime
@@ -75,7 +75,7 @@ model DailyConsumption {
 
 model WeeklyConsumption {
   id                Int      @id @default(autoincrement())
-  amount            Float    @db.DoublePrecision
+  amount            Float
   fuelInLiters      Float    @map("fuel_in_liters")
   fuelType          String   @map("fuel_type")
   fuelStationId     String   @map("fuel_station_id")
@@ -91,7 +91,7 @@ model WeeklyConsumption {
 
 model MonthlyConsumption {
   id                Int      @id @default(autoincrement())
-  amount            Float    @db.DoublePrecision
+  amount            Float
   fuelInLiters      Float    @map("fuel_in_liters")
   fuelType          String   @map("fuel_type")
   fuelStationId     String   @map("fuel_station_id")

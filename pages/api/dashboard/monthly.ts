@@ -3,16 +3,8 @@ import {
   startOfToday,
   format,
   endOfToday,
-  subDays,
-  subWeeks,
   subMonths,
-  eachDayOfInterval,
-  eachWeekOfInterval,
   eachMonthOfInterval,
-  startOfWeek,
-  startOfMonth,
-  endOfWeek,
-  endOfMonth,
 } from "date-fns";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";

@@ -11,11 +11,11 @@ import DisplayRegionData from "@/components/dashboard/display-region";
 import DisplayGasStationData from "@/components/dashboard/display-gas-station";
 
 const Home = ({
-  dailyData,
-  weeklyData,
-  monthlyData,
-  regionData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      dailyData,
+      weeklyData,
+      monthlyData,
+      regionData,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     totalDailyTransaction,
     totalDailyPayment,
