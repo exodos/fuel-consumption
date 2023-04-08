@@ -140,7 +140,7 @@ const ForceResetPassword = ({
           </div>
           <div className="relative lg:w-2/4">
             <div className="mt-10">
-              <div className="sm:flex sm:items-center">
+              <div className="sm:flex sm:ml-5 sm:items-center">
                 <div className="sm:flex-initial sm:ml-8">
                   <Image
                     className="h-20 w-auto"
@@ -173,9 +173,9 @@ const ForceResetPassword = ({
             <div className="flex py-10 px-10 sm:px-9 lg:flex-none lg:px-40 xl:px-44">
               <div className="mt-10 mx-10">
                 <div className="mt-1">
-                  <h1 className="text-lightGreen font-bold text-3xl">
+                  <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
                     You must change your password
-                  </h1>
+                  </h2>
                 </div>
               </div>
             </div>

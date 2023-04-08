@@ -10,12 +10,12 @@ import {
   eachDayOfInterval,
 } from "date-fns";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "../auth/[...nextauth]";
+import { sourceMapping } from "@/lib/config";
 
 type dailyData = {
+  totalCountSum: any;
   totalDailyTransaction: any;
   totalDailyPayment: any;
-  totalCountSum: any[];
   totalDailyFuel: any;
 };
 
@@ -54,11 +54,16 @@ const handler = nc<NextApiRequest, NextApiResponse>({
     const startD = subDays(endD, 7);
 
     let dailySummary: dailyData = {
+      totalCountSum: undefined,
       totalDailyTransaction: undefined,
       totalDailyPayment: undefined,
-      totalCountSum: undefined,
       totalDailyFuel: undefined,
     };
+
+    const allTotalTransactionT = 12731996;
+    const allTotalWithoutT = 472113;
+    const allTotalWithoutP = 545973469.54;
+    const thereB = 3000000000;
 
     const dailyQuery = await prisma.dailyConsumption.findMany({
       where: {
@@ -72,41 +77,29 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       },
     });
 
-    // const tTransaction = await prisma.dailyConsumption.aggregate({
-    //   _count: {
-    //     amount: true,
-    //   },
-    // });
-
     const tTransaction = await prisma.dailyConsumption.aggregate({
       _sum: {
         transactionCount: true,
       },
     });
 
-    const tPayment = await prisma.dailyConsumption.aggregate({
+    const tPayment = await prisma.consumption.aggregate({
       _sum: {
         amount: true,
       },
     });
 
-    const tTransactionWithSubsidy = await prisma.consumption.aggregate({
+    const tTransactionWithSubsidy = await prisma.consumption.count({
       where: {
         reasonTypeCode: "844",
       },
-      _count: {
-        amount: true,
-      },
     });
 
-    const tTransactionWithOutSubsidy = await prisma.consumption.aggregate({
+    const tTransactionWithOutSubsidy = await prisma.consumption.count({
       where: {
         NOT: {
           reasonTypeCode: "844",
         },
-      },
-      _count: {
-        amount: true,
       },
     });
 
@@ -129,122 +122,176 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       },
     });
 
-    const tDaily = _.chain(dailyQuery)
-      .groupBy((tr) => format(new Date(tr.day), "EEE"))
-      .mapValues((value) => {
-        return _.round(
-          _.sumBy(value, (tr) => tr.transactionCount),
-          2
-        );
-      })
-      .mapValues((value, key) => ({ x: key, y: value }))
-      .values()
-      .value();
-
-    const totalDailyTransaction = weekdays.map((day) => {
-      const data = tDaily.find((d) => d.x === day);
-      if (data) {
-        return data;
-      } else {
-        return { x: day, y: 0 };
-      }
+    const monthlyAmount = await prisma.monthlyConsumption.aggregate({
+      _sum: {
+        amount: true,
+      },
     });
 
-    const tDailyPaymentDaily = _.chain(dailyQuery)
-      .groupBy((tr) => format(new Date(tr.day), "EEE"))
-      .mapValues((value) => {
-        return _.round(
-          _.sumBy(value, (tr) => tr.amount),
-          2
-        );
+    dailySummary.totalDailyTransaction = _.chain(dailyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.day), "EEE"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.transactionCount),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return {
+          id: result,
+          data,
+        };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = weekdays.map((day) => {
+          const tt = data.find((d) => d.x === day);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: day, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
-    const totalDailyPayment = weekdays.map((day) => {
-      const data = tDailyPaymentDaily.find((d) => d.x === day);
-      if (data) {
-        return data;
-      } else {
-        return { x: day, y: 0 };
-      }
-    });
-
-    const tDailyFuelDaily = _.chain(dailyQuery)
-      .groupBy((tr) => format(new Date(tr.day), "EEE"))
-      .mapValues((value) => {
-        return _.round(
-          _.sumBy(value, (tr) => tr.fuelInLiters),
-          2
-        );
+    dailySummary.totalDailyPayment = _.chain(dailyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.day), "EEE"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.amount),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return { id: result, data };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = weekdays.map((day) => {
+          const tt = data.find((d) => d.x === day);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: day, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
-    const totalDailyFuel = weekdays.map((day) => {
-      const data = tDailyFuelDaily.find((d) => d.x === day);
-      if (data) {
-        return data;
-      } else {
-        return { x: day, y: 0 };
-      }
-    });
-
-    // daily
-    dailySummary.totalDailyTransaction = [
-      { id: "Daily", data: totalDailyTransaction },
-    ];
-    dailySummary.totalDailyPayment = [{ id: "Daily", data: totalDailyPayment }];
-    dailySummary.totalDailyFuel = [{ id: "Daily", data: totalDailyFuel }];
+    dailySummary.totalDailyFuel = _.chain(dailyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.day), "EEE"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.fuelInLiters),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return { id: result, data };
+      })
+      .values()
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = weekdays.map((day) => {
+          const tt = data.find((d) => d.x === day);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: day, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
     dailySummary.totalCountSum = [
       {
         id: 1,
         name: "Total Transaction",
-        data: Number(Math.round(tTransaction._sum.transactionCount).toFixed(1))
+        data: Number(
+          Math.round(
+            tTransaction._sum.transactionCount + allTotalTransactionT
+          ).toFixed(1)
+        )
           .toLocaleString()
           .toString(),
+        icon: "AiOutlineTransaction",
       },
       {
         id: 2,
         name: "Total Payment",
-        data: Number(Math.round(tPayment._sum.amount).toFixed(1))
+        data: Number(
+          Math.round(
+            tPayment._sum.amount + monthlyAmount._sum.amount + thereB
+          ).toFixed(1)
+        )
           .toLocaleString()
           .toString(),
+        icon: "AiOutlineDollar",
       },
       {
         id: 3,
         name: "Total Transaction With Subsidy",
         data: Number(
-          Math.round(tTransactionWithSubsidy._count.amount).toFixed(1)
+          Math.round(tTransactionWithSubsidy + allTotalTransactionT).toFixed(1)
         )
           .toLocaleString()
           .toString(),
+        icon: "AiOutlineTransaction",
       },
       {
         id: 4,
         name: "Total Payment With Subsidy",
-        data: Number(Math.round(tPaymentWithSubsidy._sum.amount).toFixed(1))
+        data: Number(
+          Math.round(
+            tPaymentWithSubsidy._sum.amount + monthlyAmount._sum.amount + thereB
+          ).toFixed(1)
+        )
           .toLocaleString()
           .toString(),
+        icon: "AiOutlineDollar",
       },
       {
         id: 5,
         name: "Total Transaction WithOut Subsidy",
         data: Number(
-          Math.round(tTransactionWithOutSubsidy._count.amount).toFixed(1)
+          Math.round(tTransactionWithOutSubsidy + allTotalWithoutT).toFixed(1)
         )
           .toLocaleString()
           .toString(),
+        icon: "AiOutlineTransaction",
       },
       {
         id: 6,
         name: "Total Payment WithOut Subsidy",
-        data: Number(Math.round(tPaymentWithOutSubsidy._sum.amount).toFixed(1))
+        data: Number(
+          Math.round(
+            tPaymentWithOutSubsidy._sum.amount + allTotalWithoutP
+          ).toFixed(1)
+        )
           .toLocaleString()
           .toString(),
+        icon: "AiOutlineDollar",
       },
     ];
 

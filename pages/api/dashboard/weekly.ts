@@ -8,6 +8,7 @@ import {
 } from "date-fns";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
+import { sourceMapping } from "@/lib/config";
 
 type weeklyData = {
   totalWeeklyTransaction: any;
@@ -18,6 +19,11 @@ type weeklyData = {
 const getLastSixWeeks = () => {
   const today = startOfToday();
   const sixWeeksAgo = subWeeks(today, 6);
+  console.log(
+    "🚀 ~ file: weekly.ts:24 ~ getLastSixWeeks ~ sixWeeksAgo:",
+    sixWeeksAgo
+  );
+
   const weeks = eachWeekOfInterval({
     start: sixWeeksAgo,
     end: today,
@@ -30,7 +36,7 @@ const getLastSixWeeks = () => {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const weekYears = getLastSixWeeks();
   const endW = endOfToday();
-  const startW = subWeeks(endW, 7);
+  const startW = subWeeks(endW, 5);
 
   let weekSummary: weeklyData = {
     totalWeeklyTransaction: undefined,
@@ -51,76 +57,106 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    const tWeekly = _.chain(weeklyQuery)
-      .groupBy((tr) => format(new Date(tr.week), "Io"))
-      .mapValues((value) => {
-        return _.round(
-          _.sumBy(value, (tr) => tr.transactionCount),
-          2
-        );
+    weekSummary.totalWeeklyTransaction = _.chain(weeklyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.week), "Io"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.transactionCount),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return {
+          id: result,
+          data,
+        };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = weekYears.map((week) => {
+          const tt = data.find((d) => d.x === week);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: week, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
-    const totalWeeklyTransaction = weekYears.map((week) => {
-      const data = tWeekly.find((d) => d.x === week);
-      if (data) {
-        return data;
-      } else {
-        return { x: week, y: 0 };
-      }
-    });
-
-    const tPaymentWeekly = _.chain(weeklyQuery)
-      .groupBy((tr) => format(new Date(tr.week), "Io"))
-      .mapValues((value) => {
-        return _.round(
-          _.sumBy(value, (tr) => tr.amount),
-          2
-        );
+    weekSummary.totalWeeklyPayment = _.chain(weeklyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.week), "Io"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.amount),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return {
+          id: result,
+          data,
+        };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
-
-    const totalWeeklyPayment = weekYears.map((week) => {
-      const data = tPaymentWeekly.find((d) => d.x === week);
-      if (data) {
-        return data;
-      } else {
-        return { x: week, y: 0 };
-      }
-    });
-
-    const tFuelWeekly = _.chain(weeklyQuery)
-      .groupBy((tr) => format(new Date(tr.week), "Io"))
-      .mapValues((value) => {
-        return _.round(
-          _.sumBy(value, (tr) => tr.fuelInLiters),
-          2
-        );
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = weekYears.map((week) => {
+          const tt = data.find((d) => d.x === week);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: week, y: 0 };
+          }
+        });
+        return { id, data };
+      });
+    weekSummary.totalWeeklyFuel = _.chain(weeklyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.week), "Io"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.fuelInLiters),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return {
+          id: result,
+          data,
+        };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
-
-    const totalWeeklyFuel = weekYears.map((week) => {
-      const data = tFuelWeekly.find((d) => d.x === week);
-      if (data) {
-        return data;
-      } else {
-        return { x: week, y: 0 };
-      }
-    });
-
-    weekSummary.totalWeeklyTransaction = [
-      { id: "Weekly", data: totalWeeklyTransaction },
-    ];
-    weekSummary.totalWeeklyPayment = [
-      { id: "Weekly", data: totalWeeklyPayment },
-    ];
-    weekSummary.totalWeeklyFuel = [{ id: "Weekly", data: totalWeeklyFuel }];
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = weekYears.map((week) => {
+          const tt = data.find((d) => d.x === week);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: week, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
     res.status(200).json(weekSummary);
   } catch (error) {

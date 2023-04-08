@@ -8,6 +8,7 @@ import {
 } from "date-fns";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
+import { sourceMapping } from "@/lib/config";
 
 type monthlyData = {
   totalMonthlyTransaction: any;
@@ -17,7 +18,7 @@ type monthlyData = {
 
 const getLastSixMonths = () => {
   const today = startOfToday();
-  const twelveMonths = subMonths(today, 6);
+  const twelveMonths = subMonths(today, 7);
   const months = eachMonthOfInterval({
     start: twelveMonths,
     end: today,
@@ -29,7 +30,7 @@ const getLastSixMonths = () => {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const monthYears = getLastSixMonths();
   const endM = endOfToday();
-  const startM = subMonths(endM, 7);
+  const startM = subMonths(endM, 5);
 
   let monthlySummary: monthlyData = {
     totalMonthlyTransaction: undefined,
@@ -50,73 +51,108 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    const tMonthly = _.chain(monthlyQuery)
-      .groupBy((tr) => format(new Date(tr.month), "MMM"))
-      .mapValues((value) => {
-        return _.round(
-          _.sumBy(value, (tr) => tr.transactionCount),
-          2
-        );
+    monthlySummary.totalMonthlyTransaction = _.chain(monthlyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.month), "MMM"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.transactionCount),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return {
+          id: result,
+          data,
+        };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = monthYears.map((month) => {
+          const tt = data.find((d) => d.x === month);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: month, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
-    const totalMonthlyTransaction = monthYears.map((month) => {
-      const data = tMonthly.find((d) => d.x === month);
-      if (data) {
-        return data;
-      } else {
-        return { x: month, y: 0 };
-      }
-    });
-
-    const tPaymentMonthly = _.chain(monthlyQuery)
-      .groupBy((tr) => format(new Date(tr.month), "MMM"))
-      .mapValues((value) => {
-        return _.round(_.sumBy(value, (tr) => tr.amount));
+    monthlySummary.totalMonthlyPayment = _.chain(monthlyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.month), "MMM"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.amount),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return {
+          id: result,
+          data,
+        };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = monthYears.map((month) => {
+          const tt = data.find((d) => d.x === month);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: month, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
-    const totalMonthlyPayment = monthYears.map((month) => {
-      const data = tPaymentMonthly.find((d) => d.x === month);
-      if (data) {
-        return data;
-      } else {
-        return { x: month, y: 0 };
-      }
-    });
-
-    const tFuelMonthly = _.chain(monthlyQuery)
-      .groupBy((tr) => format(new Date(tr.month), "MMM"))
-      .mapValues((value) => {
-        return _.round(_.sumBy(value, (tr) => tr.fuelInLiters));
+    monthlySummary.totalMonthlyFuel = _.chain(monthlyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((perSourceId, sourceId) => {
+        const data = _.chain(perSourceId)
+          .groupBy((tr) => format(new Date(tr.month), "MMM"))
+          .mapValues((value) => {
+            return _.round(
+              _.sumBy(value, (tr) => tr.fuelInLiters),
+              2
+            );
+          })
+          .mapValues((value, key) => ({ x: key, y: value }))
+          .values()
+          .value();
+        const result = sourceMapping.find((item) => item.id === sourceId).name;
+        return {
+          id: result,
+          data,
+        };
       })
-      .mapValues((value, key) => ({ x: key, y: value }))
       .values()
-      .value();
+      .map((tr) => {
+        const { data, id } = tr;
+        const d = monthYears.map((month) => {
+          const tt = data.find((d) => d.x === month);
+          if (tt) {
+            return tt;
+          } else {
+            return { x: month, y: 0 };
+          }
+        });
+        return { id, data };
+      });
 
-    const totalMonthlyFuel = monthYears.map((month) => {
-      const data = tFuelMonthly.find((d) => d.x === month);
-      if (data) {
-        return data;
-      } else {
-        return { x: month, y: 0 };
-      }
-    });
-
-    monthlySummary.totalMonthlyTransaction = [
-      { id: "Monthly", data: totalMonthlyTransaction },
-    ];
-    monthlySummary.totalMonthlyPayment = [
-      { id: "Monthly", data: totalMonthlyPayment },
-    ];
-
-    monthlySummary.totalMonthlyFuel = [
-      { id: "Monthly", data: totalMonthlyFuel },
-    ];
     res.status(200).json(monthlySummary);
   } catch (error) {
     res.status(412).json({ message: error.message });

@@ -1,4 +1,5 @@
 import { FuelChart } from "./fuel-trend";
+import { LineChartBySource } from "./linechart-by-source";
 import { PaymentTrend } from "./payement-trend";
 import RegionPieChart from "./pie-charts";
 import { TransactionTrend } from "./transaction-trend.";
@@ -12,15 +13,16 @@ const DisplayMonthlyDashBoard = ({
 }) => {
   return (
     <div>
-      <dl className="mt-3 mx-auto grid grid-cols-1 gap-2 sm:grid-cols-1 lg:max-w-none lg:grid-cols-3">
+      <dl className="mt-3 mx-auto grid grid-cols-1 gap-2 sm:grid-cols-1 lg:max-w-none lg:grid-cols-1">
         <div className="border bg-white border-gray-300 rounded-xl p-10">
           <dt className="text-gray-500 text-center">Transaction (Count)</dt>
           <dd className="mt-5 text-lg text-center">
             <div className="w-full h-[400px]">
-              <TransactionTrend
+              <LineChartBySource
                 data={totalMonthlyTransaction ?? []}
-                colors="#8DC63F"
-                legend={"Monthly"}
+                colors={{ scheme: "dark2" }}
+                legendFor={"Monthly"}
+                legendType={"Count"}
               />
             </div>
           </dd>
@@ -31,10 +33,12 @@ const DisplayMonthlyDashBoard = ({
           </dt>
           <dd className="mt-5 text-lg text-center">
             <div className="w-full h-[400px]">
-              <PaymentTrend
+              <LineChartBySource
                 data={totalMonthlyPayment ?? []}
-                colors="#8DC63F"
-                legend={"Monthly"}
+                colors={{ scheme: "accent" }}
+                // colors={["#9370DB", "#1E90FF", "#FF4500"]}
+                legendFor={"Monthly"}
+                legendType={"Amount (ETB)"}
               />
             </div>
           </dd>
@@ -45,27 +49,16 @@ const DisplayMonthlyDashBoard = ({
           </dt>
           <dd className="mt-5 text-lg text-center">
             <div className="w-full h-[400px]">
-              <FuelChart
+              <LineChartBySource
                 data={totalMonthlyFuel ?? []}
-                colors="#8DC63F"
-                legend={"Monthly"}
+                colors={["#8B4513", "#1E90FF", "#FF00FF"]}
+                // colors={{ scheme: "paired" }}
+                legendFor={"Monthly"}
+                legendType={"Litre"}
               />
             </div>
           </dd>
         </div>
-        {/* <div className="border bg-white border-gray-300 rounded-xl p-10">
-          <dt className="text-gray-500 text-center">
-            Transaction Amount (ETB)
-          </dt>
-          <dd className="mt-5 text-lg text-center">
-            <div className="w-full h-[400px]">
-              <RegionPieChart
-                amountMapping={amountMapping ?? []}
-                fuelMapping={fuelMapping ?? []}
-              />
-            </div>
-          </dd>
-        </div> */}
       </dl>
     </div>
   );

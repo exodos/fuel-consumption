@@ -1,4 +1,5 @@
 import { FuelChart } from "./fuel-trend";
+import { LineChartBySource } from "./linechart-by-source";
 import { PaymentTrend } from "./payement-trend";
 import { TransactionTrend } from "./transaction-trend.";
 
@@ -9,15 +10,16 @@ const DisplayDailyDashBoard = ({
 }) => {
   return (
     <div>
-      <dl className="mt-3 mx-auto grid grid-cols-1 gap-2 sm:grid-cols-1 lg:max-w-none lg:grid-cols-3">
+      <dl className="mt-3 mx-auto grid grid-cols-1 gap-2 sm:grid-cols-1 lg:max-w-none lg:grid-cols-1">
         <div className="border bg-white border-gray-300 rounded-xl p-10">
           <dt className="text-gray-500 text-center">Transaction (Count)</dt>
           <dd className="mt-5 text-lg text-center">
             <div className="w-full h-[400px]">
-              <TransactionTrend
+              <LineChartBySource
                 data={totalDailyTransaction ?? []}
-                colors="#8DC63F"
-                legend={"Daily"}
+                colors={{ scheme: "dark2" }}
+                legendFor={"Week Days"}
+                legendType={"Count"}
               />
             </div>
           </dd>
@@ -28,10 +30,11 @@ const DisplayDailyDashBoard = ({
           </dt>
           <dd className="mt-5 text-lg text-center">
             <div className="w-full h-[400px]">
-              <PaymentTrend
+              <LineChartBySource
                 data={totalDailyPayment ?? []}
-                colors="#8DC63F"
-                legend={"Daily"}
+                colors={{ scheme: "accent" }}
+                legendFor={"Week Days"}
+                legendType={"Amount(ETB)"}
               />
             </div>
           </dd>
@@ -42,10 +45,11 @@ const DisplayDailyDashBoard = ({
           </dt>
           <dd className="mt-5 text-lg text-center">
             <div className="w-full h-[400px]">
-              <FuelChart
+              <LineChartBySource
                 data={totalDailyFuel ?? []}
-                colors="#8DC63F"
-                legend={"Daily"}
+                colors={{ scheme: "paired" }}
+                legendFor={"Week Days"}
+                legendType={"Amount(ETB)"}
               />
             </div>
           </dd>

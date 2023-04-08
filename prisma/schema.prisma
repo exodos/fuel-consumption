@@ -64,7 +64,7 @@ model DailyConsumption {
   fuelType          String?  @map("fuel_type")
   fuelStationId     String?  @map("fuel_station_id")
   day               DateTime
-  sourceId          String?  @map("source_id")
+  sourceId          String   @map("source_id")
   fuelStationRegion String?  @map("fuel_station_region")
   companyId         String?  @map("company_id")
   transactionCount  Int?     @map("transaction_count")

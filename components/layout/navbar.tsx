@@ -277,39 +277,42 @@ const NavBar = ({ children }: Props) => {
                 </button>
                 <div className="flex flex-1 justify-between px-4 sm:px-6 lg:mx-auto lg:max-w-8xl lg:px-8">
                   <div className="flex flex-1">
-                    <div className="flex w-full md:ml-0">
-                      <label htmlFor="search" className="sr-only">
-                        Search
-                      </label>
-                      <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                        <div
-                          className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
-                          aria-hidden="true"
-                        >
-                          <MagnifyingGlassIcon
-                            className="h-8 w-8 ml-6 pr-1"
+                    {pathname !== "/" && (
+                      <div className="flex w-full md:ml-0">
+                        <label htmlFor="search" className="sr-only">
+                          Search
+                        </label>
+                        <div className="relative w-full text-gray-400 focus-within:text-gray-600">
+                          <div
+                            className="pointer-events-none absolute inset-y-0 left-0 flex items-center"
                             aria-hidden="true"
+                          >
+                            <MagnifyingGlassIcon
+                              className="h-8 w-8 ml-6 pr-1"
+                              aria-hidden="true"
+                            />
+                          </div>
+                          <input
+                            id="search"
+                            name="search"
+                            className="block h-full w-full border-transparent py-2 pl-10 pr-5 ml-4 text-gray-900 bg-gray-100 placeholder-gray-500 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm rounded-2xl"
+                            placeholder="Enter your keywords ..."
+                            type="search"
+                            onChange={(e) => {
+                              // setSearch(e.currentTarget.value);
+                              handleSearch(e.currentTarget.value);
+                            }}
+                            // onKeyDown={(event) => {
+                            //   setSearch(event.currentTarget.value);
+                            //   handleSearch(search);
+                            // }}
+                            // onChange={(e) => setSearch(e.target.value)}
                           />
                         </div>
-                        <input
-                          id="search"
-                          name="search"
-                          className="block h-full w-full border-transparent py-2 pl-10 pr-5 ml-4 text-gray-900 bg-gray-100 placeholder-gray-500 focus:border-transparent focus:outline-none focus:ring-0 sm:text-sm rounded-2xl"
-                          placeholder="Enter your keywords ..."
-                          type="search"
-                          onChange={(e) => {
-                            // setSearch(e.currentTarget.value);
-                            handleSearch(e.currentTarget.value);
-                          }}
-                          // onKeyDown={(event) => {
-                          //   setSearch(event.currentTarget.value);
-                          //   handleSearch(search);
-                          // }}
-                          // onChange={(e) => setSearch(e.target.value)}
-                        />
                       </div>
-                    </div>
+                    )}
                   </div>
+
                   <div className="ml-4 flex items-center md:ml-6">
                     <button
                       type="button"
