@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import nc from "next-connect";
-import _ from "lodash";
+import _, { result } from "lodash";
 import {
   startOfToday,
   format,
@@ -13,7 +13,10 @@ import { prisma } from "@/lib/prisma";
 import { sourceMapping } from "@/lib/config";
 
 type dailyData = {
+  allTransaction: any;
   totalCountSum: any;
+  totalTransactionBySource: any;
+  totalPaymentBySource: any;
   totalDailyTransaction: any;
   totalDailyPayment: any;
   totalDailyFuel: any;
@@ -54,7 +57,10 @@ const handler = nc<NextApiRequest, NextApiResponse>({
     const startD = subDays(endD, 7);
 
     let dailySummary: dailyData = {
+      allTransaction: undefined,
       totalCountSum: undefined,
+      totalTransactionBySource: undefined,
+      totalPaymentBySource: undefined,
       totalDailyTransaction: undefined,
       totalDailyPayment: undefined,
       totalDailyFuel: undefined,
@@ -224,6 +230,122 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         return { id, data };
       });
 
+    dailySummary.totalTransactionBySource = _.chain(dailyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.transactionCount),
+          2
+        );
+      })
+      .mapValues((value, key) => {
+        const rr = sourceMapping.find((item) => item.id === key).name;
+        if (rr === "TeleBirr") {
+          return {
+            id: Number(key),
+            name: "Total Transaction",
+            data: Number(Math.round(value + allTotalTransactionT).toFixed(1))
+              .toLocaleString()
+              .toString(),
+            icon: "HiOutlineRefresh",
+            via: rr.toUpperCase(),
+          };
+        }
+        return {
+          id: Number(key),
+          name: "Total Transaction",
+          data: Number(Math.round(value).toFixed(1))
+            .toLocaleString()
+            .toString(),
+          icon: "HiOutlineRefresh",
+          via: rr.toUpperCase(),
+        };
+      })
+      .values()
+      .value();
+
+    dailySummary.allTransaction = [
+      {
+        id: 1,
+        name: "Total Transaction",
+        data: Number(
+          Math.round(
+            tTransaction._sum.transactionCount + allTotalTransactionT
+          ).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+        icon: "HiOutlineRefresh",
+        via: "ALL",
+      },
+      {
+        id: 2,
+        name: "Total Transaction With Subsidy",
+        data: Number(
+          Math.round(tTransactionWithSubsidy + allTotalTransactionT).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+        icon: "HiOutlineRefresh",
+        via: "TELEBIRR",
+      },
+      {
+        id: 3,
+        name: "Total Transaction WithOut Subsidy",
+        data: Number(
+          Math.round(tTransactionWithOutSubsidy + allTotalWithoutT).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+        icon: "HiOutlineRefresh",
+        via: "ALL",
+      },
+    ];
+
+    const monthlyAmountBySource = await prisma.monthlyConsumption.groupBy({
+      by: ["sourceId"],
+      _sum: {
+        amount: true,
+      },
+    });
+
+    dailySummary.totalPaymentBySource = _.chain(dailyQuery)
+      .groupBy((tr) => tr.sourceId)
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.amount),
+          2
+        );
+      })
+      .mapValues((value, key) => {
+        const rr = sourceMapping.find((item) => item.id === key).name;
+        const monthlySum = monthlyAmountBySource.find(
+          (item) => item.sourceId === key
+        )._sum.amount;
+        if (rr === "TeleBirr") {
+          return {
+            id: Number(key),
+            name: "Total Payment",
+            data: Number(Math.round(value + monthlySum + thereB).toFixed(1))
+              .toLocaleString()
+              .toString(),
+            icon: "HiCurrencyDollar",
+            via: rr.toUpperCase(),
+          };
+        }
+        return {
+          id: Number(key),
+          name: "Total Payment",
+          data: Number(Math.round(value + monthlySum).toFixed(1))
+            .toLocaleString()
+            .toString(),
+          icon: "HiCurrencyDollar",
+          via: rr.toUpperCase(),
+        };
+      })
+      .values()
+      .value();
+
     dailySummary.totalCountSum = [
       {
         id: 1,
@@ -235,7 +357,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         )
           .toLocaleString()
           .toString(),
-        icon: "AiOutlineTransaction",
+        icon: "HiOutlineRefresh",
+        via: "TeleBirr",
       },
       {
         id: 2,
@@ -247,7 +370,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         )
           .toLocaleString()
           .toString(),
-        icon: "AiOutlineDollar",
+        icon: "HiCurrencyDollar",
+        via: "TeleBirr",
       },
       {
         id: 3,
@@ -257,7 +381,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         )
           .toLocaleString()
           .toString(),
-        icon: "AiOutlineTransaction",
+        icon: "HiOutlineRefresh",
+        via: "TeleBirr",
       },
       {
         id: 4,
@@ -269,7 +394,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         )
           .toLocaleString()
           .toString(),
-        icon: "AiOutlineDollar",
+        icon: "HiCurrencyDollar",
+        via: "TeleBirr",
       },
       {
         id: 5,
@@ -279,7 +405,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         )
           .toLocaleString()
           .toString(),
-        icon: "AiOutlineTransaction",
+        icon: "HiOutlineRefresh",
+        via: "TeleBirr",
       },
       {
         id: 6,
@@ -291,7 +418,8 @@ const handler = nc<NextApiRequest, NextApiResponse>({
         )
           .toLocaleString()
           .toString(),
-        icon: "AiOutlineDollar",
+        icon: "HiCurrencyDollar",
+        via: "TeleBirr",
       },
     ];
 

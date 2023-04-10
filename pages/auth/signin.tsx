@@ -1,7 +1,7 @@
 import { MdEmail } from "react-icons/md";
 import { InferGetServerSidePropsType } from "next";
 import Image from "next/image";
-import { RiLockPasswordLine } from "react-icons/ri";
+import { RiLockPasswordFill, RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
@@ -47,7 +47,7 @@ const SignIn = ({
           <div className="relative lg:w-2/4">
             <div className="mt-10">
               <div className="sm:flex sm:ml-5 sm:items-center">
-                <div className="sm:flex-initial sm:ml-8 ml-16">
+                <div className="sm:flex-initial sm:ml-8 ml-8">
                   <Image
                     className="h-20 w-auto"
                     src={"/logos/ethio-logo.svg"}
@@ -65,7 +65,7 @@ const SignIn = ({
                   height={90}
                 /> */}
                 </div>
-                <div className="sm:mt-0 sm:mr-8 ml-20 sm:flex-none">
+                <div className="sm:mt-0 sm:mr-8 ml-12 sm:flex-none">
                   <Image
                     className="h-16 w-auto"
                     src={"/logos/telebirr-logo.svg"}
@@ -115,7 +115,7 @@ const SignIn = ({
                         <div className="relative">
                           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <MdEmail
-                              className="h-6 w-6 text-gray-400"
+                              className="h-6 w-6 text-lightGreen"
                               aria-hidden="true"
                             />
                           </div>
@@ -142,8 +142,8 @@ const SignIn = ({
                         </label>
                         <div className="relative">
                           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <RiLockPasswordLine
-                              className="h-6 w-6 text-gray-400"
+                            <RiLockPasswordFill
+                              className="h-6 w-6 text-lightGreen"
                               aria-hidden="true"
                             />
                           </div>

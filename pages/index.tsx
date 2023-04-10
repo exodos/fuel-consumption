@@ -9,14 +9,18 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
 import DisplayRegionData from "@/components/dashboard/display-region";
 import DisplayGasStationData from "@/components/dashboard/display-gas-station";
+import DisplayTransaction from "@/components/dashboard/transaction-display";
 
 const Home = ({
-      dailyData,
-      weeklyData,
-      monthlyData,
-      regionData,
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  dailyData,
+  weeklyData,
+  monthlyData,
+  regionData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
+    allTransaction,
+    totalTransactionBySource,
+    totalPaymentBySource,
     totalDailyTransaction,
     totalDailyPayment,
     totalCountSum,
@@ -45,7 +49,15 @@ const Home = ({
           </div>
         </div>
         <div className="mt-10">
-          <DisplayCount totalCountSum={totalCountSum} />
+          {/* <DisplayCount totalCountSum={totalTransactionBySource} /> */}
+        </div>
+        <div className="mt-10">
+          {/* <DisplayCount totalCountSum={totalCountSum} /> */}
+          <DisplayTransaction
+            allTransaction={allTransaction}
+            totalTransactionBySource={totalTransactionBySource}
+            totalPaymentBySource={totalPaymentBySource}
+          />
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
           <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
@@ -141,7 +153,6 @@ export const getServerSideProps = async ({ req, res }) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-  // console.log(dailyData);
   return {
     props: {
       session,

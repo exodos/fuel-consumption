@@ -22,7 +22,7 @@ const DisplayCount = ({ totalCountSum }) => {
         {/* <h3 className="text-base font-semibold leading-6 text-gray-900">
           Last 30 days
         </h3> */}
-        <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {totalCountSum?.map((item: any, i: any) => (
             <div
               key={i}
@@ -37,10 +37,18 @@ const DisplayCount = ({ totalCountSum }) => {
                 </p>
               </dt>
               <dd className="ml-16 flex items-baseline pb-2 sm:pb-1">
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-2xl font-semibold text-lightBlue">
                   {item.data}
+                  {/* <span className="ml-2 text-sm font-medium text-gray-500">
+                    {item.via}
+                  </span> */}
                 </p>
               </dd>
+              <div className="text-sm ml-16">
+                <span className="ml-2 text-sm font-medium text-gray-500">
+                  {item.via}
+                </span>
+              </div>
             </div>
           ))}
         </dl>

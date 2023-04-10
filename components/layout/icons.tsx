@@ -1,4 +1,4 @@
-import * as ReactIcons from "react-icons/ai";
+import * as ReactIcons from "react-icons/hi";
 export const Icons = ({ rows }) => {
   const IconsComponent = ReactIcons[rows];
   return (
