@@ -10,7 +10,7 @@ const DisplayTransaction = ({
   return (
     <>
       <div>
-        <dl className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {allTransaction?.map((item: any, i: any) => (
             <div
               key={i}

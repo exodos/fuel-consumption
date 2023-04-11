@@ -129,7 +129,7 @@ const UserChangePassword = ({
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex py-10 px-10 sm:px-8 lg:flex-none lg:px-40 xl:px-44">
             <div className="mx-auto w-full max-w-lg">
-              <div className="mt-10">
+              <div className="mt-32">
                 <Formik
                   initialValues={formValues || initialValues}
                   validationSchema={validate}

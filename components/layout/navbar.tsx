@@ -66,10 +66,7 @@ const NavBar = ({ children }: Props) => {
       {/* <div className="min-h-full"> */}
 
       <div className="fixed left-0 top-0 h-full w-1/2" aria-hidden="true" />
-      <div
-        className="fixed right-0 top-0 h-full w-1/2 bg-gray-50"
-        aria-hidden="true"
-      />
+      <div className="fixed right-0 top-0 h-full w-1/2" aria-hidden="true" />
       <div className="relative flex min-h-full flex-col">
         <Disclosure as="nav" className="flex-shrink-0 bg-lightGreen">
           {({ open }) => (
@@ -167,10 +164,6 @@ const NavBar = ({ children }: Props) => {
                                     : "text-black hover:text-white",
                                   "block rounded-md px-3 py-2 text-base font-medium"
                                 )}
-                                aria-current={item.current ? "page" : undefined}
-
-                                // ? "bg-lightBlue text-white"
-                                // : "text-black hover:bg-deepBlue hover:text-white",
                               >
                                 {item.name}
                               </a>
@@ -197,7 +190,7 @@ const NavBar = ({ children }: Props) => {
                           leaveTo="transform opacity-0 scale-95"
                         >
                           <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            {userNavigation.map((item) => (
+                            {/* {userNavigation.map((item) => (
                               <Menu.Item key={item.name}>
                                 {({ active }) => (
                                   <a
@@ -211,7 +204,52 @@ const NavBar = ({ children }: Props) => {
                                   </a>
                                 )}
                               </Menu.Item>
-                            ))}
+                            ))} */}
+                            <Menu.Item>
+                              {({ active }) => (
+                                <MyLink href={"/"}>
+                                  <a
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700"
+                                    )}
+                                  >
+                                    Your Profile
+                                  </a>
+                                </MyLink>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <MyLink href={"/auth/change-password"}>
+                                  <a
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700"
+                                    )}
+                                  >
+                                    Change Password
+                                  </a>
+                                </MyLink>
+                                // </Link>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    signOut();
+                                  }}
+                                  className={classNames(
+                                    active ? "bg-gray-100" : "",
+                                    "block px-5 py-2 text-sm text-gray-700"
+                                  )}
+                                >
+                                  Logout
+                                </button>
+                              )}
+                            </Menu.Item>
                           </Menu.Items>
                         </Transition>
                       </Menu>
@@ -223,34 +261,56 @@ const NavBar = ({ children }: Props) => {
               <Disclosure.Panel className="lg:hidden">
                 <div className="space-y-1 px-2 pb-3 pt-2">
                   {navigation.map((item) => (
-                    <Disclosure.Button
-                      key={item.name}
-                      as="a"
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? "bg-lightBlue text-white"
-                          : "text-black hover:bg-deepBlue hover:text-white",
-                        "block rounded-md px-3 py-2 text-base font-medium"
-                      )}
-                      aria-current={item.current ? "page" : undefined}
-                    >
-                      {item.name}
-                    </Disclosure.Button>
+                    <div key={item.name}>
+                      <Link href={item.href}>
+                        <Disclosure.Button
+                          key={item.name}
+                          as="a"
+                          href={item.href}
+                          className={classNames(
+                            item.href === pathname
+                              ? "bg-lightBlue text-white"
+                              : "text-black hover:bg-deepBlue hover:text-white",
+                            "block rounded-md px-3 py-2 text-base font-medium"
+                          )}
+                          aria-current={item.current ? "page" : undefined}
+                        >
+                          {item.name}
+                        </Disclosure.Button>
+                      </Link>
+                    </div>
                   ))}
                 </div>
                 <div className="border-t border-indigo-800 pb-3 pt-4">
                   <div className="space-y-1 px-2">
-                    {userNavigation.map((item) => (
+                    <Link href={"/"}>
                       <Disclosure.Button
-                        key={item.name}
                         as="a"
-                        href={item.href}
+                        href="#"
                         className="block rounded-md px-3 py-2 text-base font-medium text-indigo-200 hover:bg-indigo-600 hover:text-indigo-100"
                       >
-                        {item.name}
+                        Your Profile
                       </Disclosure.Button>
-                    ))}
+                    </Link>
+                    <Link href={"/auth/change-password"}>
+                      <Disclosure.Button
+                        as="a"
+                        href="#"
+                        className="block rounded-md px-3 py-2 text-base font-medium text-indigo-200 hover:bg-deepBlue hover:text-indigo-100"
+                      >
+                        Change Password
+                      </Disclosure.Button>
+                    </Link>
+                    <Disclosure.Button className="block rounded-md px-3 py-2 text-base font-medium text-indigo-200 hover:bg-indigo-600 hover:text-indigo-100">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          signOut();
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </Disclosure.Button>
                   </div>
                 </div>
               </Disclosure.Panel>
@@ -258,13 +318,13 @@ const NavBar = ({ children }: Props) => {
           )}
         </Disclosure>
 
-        <div className="-mt-40">
-          <main className="flex-1 pb-10 flex-col lg:pl-28">
-            <div className="mt-8">
-              <div className="sm:block">{children}</div>
-            </div>
-          </main>
-        </div>
+        {/* <div className="mt-1"> */}
+        <main className="flex-1 pb-10 flex-col lg:pl-28">
+          {/* <div className="mt-1"> */}
+          <div className="sm:block">{children}</div>
+          {/* </div> */}
+        </main>
+        {/* </div> */}
       </div>
     </>
   );

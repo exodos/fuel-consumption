@@ -40,17 +40,7 @@ const Home = ({
         content={"Fuel Consumption Dashboard Page"}
       />
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        {/* <div className="px-4 sm:px-6 lg:px-8">
-          <div className="sm:flex sm:items-center">
-            <div className="sm:flex-auto">
-              <h1 className="text-xl font-semibold text-gray-50">
-                Fuel Consumption Dashboard
-              </h1>
-            </div>
-          </div>
-        </div> */}
-        {/* <div className="mt-40"></div> */}
-        <div className="mt-32">
+        <div>
           <DisplayTransaction
             allTransaction={allTransaction}
             totalTransactionBySource={totalTransactionBySource}
