@@ -46,27 +46,15 @@ const FeedConsumption = gql`
 `;
 
 const ConsumptionPage = ({
-      data,
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  data,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
       <SiteHeader
         title={"Fuel Consumption Page"}
         content={"Fuel Consumption Page"}
       />
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="sm:flex sm:items-center">
-            <div className="sm:flex-auto">
-              <h1 className="text-xl font-semibold text-gray-50">
-                Consumption
-              </h1>
-              <p className="text-base font-medium text-gray-50 pt-1">
-                List Of All Consumption
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 mt-20">
         <ListConsumption consumptionData={data.feedConsumption} />
       </div>
     </>

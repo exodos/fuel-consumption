@@ -12,17 +12,18 @@ import DisplayGasStationData from "@/components/dashboard/display-gas-station";
 import DisplayTransaction from "@/components/dashboard/transaction-display";
 
 const Home = ({
-  dailyData,
-  weeklyData,
-  monthlyData,
-  regionData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      dailyData,
+      weeklyData,
+      monthlyData,
+      regionData,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     allTransaction,
     totalTransactionBySource,
     totalPaymentBySource,
     totalDailyTransaction,
     totalDailyPayment,
+    allPayment,
     totalCountSum,
     totalDailyFuel,
   } = dailyData ?? {};
@@ -39,7 +40,7 @@ const Home = ({
         content={"Fuel Consumption Dashboard Page"}
       />
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        <div className="px-4 sm:px-6 lg:px-8">
+        {/* <div className="px-4 sm:px-6 lg:px-8">
           <div className="sm:flex sm:items-center">
             <div className="sm:flex-auto">
               <h1 className="text-xl font-semibold text-gray-50">
@@ -47,15 +48,13 @@ const Home = ({
               </h1>
             </div>
           </div>
-        </div>
-        <div className="mt-10">
-          {/* <DisplayCount totalCountSum={totalTransactionBySource} /> */}
-        </div>
-        <div className="mt-10">
-          {/* <DisplayCount totalCountSum={totalCountSum} /> */}
+        </div> */}
+        {/* <div className="mt-40"></div> */}
+        <div className="mt-32">
           <DisplayTransaction
             allTransaction={allTransaction}
             totalTransactionBySource={totalTransactionBySource}
+            allPayment={allPayment}
             totalPaymentBySource={totalPaymentBySource}
           />
         </div>

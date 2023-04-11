@@ -19,10 +19,6 @@ type weeklyData = {
 const getLastSixWeeks = () => {
   const today = startOfToday();
   const sixWeeksAgo = subWeeks(today, 6);
-  console.log(
-    "🚀 ~ file: weekly.ts:24 ~ getLastSixWeeks ~ sixWeeksAgo:",
-    sixWeeksAgo
-  );
 
   const weeks = eachWeekOfInterval({
     start: sixWeeksAgo,

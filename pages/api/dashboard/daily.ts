@@ -14,6 +14,7 @@ import { sourceMapping } from "@/lib/config";
 
 type dailyData = {
   allTransaction: any;
+  allPayment: any;
   totalCountSum: any;
   totalTransactionBySource: any;
   totalPaymentBySource: any;
@@ -58,6 +59,7 @@ const handler = nc<NextApiRequest, NextApiResponse>({
 
     let dailySummary: dailyData = {
       allTransaction: undefined,
+      allPayment: undefined,
       totalCountSum: undefined,
       totalTransactionBySource: undefined,
       totalPaymentBySource: undefined,
@@ -345,6 +347,48 @@ const handler = nc<NextApiRequest, NextApiResponse>({
       })
       .values()
       .value();
+
+    dailySummary.allPayment = [
+      {
+        id: 1,
+        name: "Total Payment",
+        data: Number(
+          Math.round(
+            tPayment._sum.amount + monthlyAmount._sum.amount + thereB
+          ).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+        icon: "HiCurrencyDollar",
+        via: "ALL",
+      },
+      {
+        id: 1,
+        name: "Total Payment With Subsidy",
+        data: Number(
+          Math.round(
+            tPaymentWithSubsidy._sum.amount + monthlyAmount._sum.amount + thereB
+          ).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+        icon: "HiCurrencyDollar",
+        via: "TELEBIRR",
+      },
+      {
+        id: 3,
+        name: "Total Payment WithOut Subsidy",
+        data: Number(
+          Math.round(
+            tPaymentWithOutSubsidy._sum.amount + allTotalWithoutP
+          ).toFixed(1)
+        )
+          .toLocaleString()
+          .toString(),
+        icon: "HiCurrencyDollar",
+        via: "ALL",
+      },
+    ];
 
     dailySummary.totalCountSum = [
       {
