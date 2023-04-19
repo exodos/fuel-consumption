@@ -6,7 +6,11 @@ import * as Yup from "yup";
 import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import SignInLayout from "@/layout/signin-layout";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 import Head from "next/head";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { gql } from "apollo-server-micro";
@@ -181,10 +185,10 @@ const ForceResetPassword = ({
             </div>
             <div className="mt-2 justify-center items-center mx-40">
               <Formik
-                initialValues={formValues || initialValues}
+                initialValues={initialValues}
                 validationSchema={validate}
                 onSubmit={onSubmit}
-                enableReinitialize={true}
+                // enableReinitialize={true}
               >
                 <Form className="space-y-0">
                   <div>
@@ -262,7 +266,6 @@ const ForceResetPassword = ({
                       </div>
                     </div>
                   </div>
-
                   <div className="pt-4">
                     <button
                       type="submit"
@@ -281,7 +284,9 @@ const ForceResetPassword = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session) {
@@ -292,14 +297,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  //   else if (!session.user.adminRestPassword) {
-  //     return {
-  //       redirect: {
-  //         destination: "/",
-  //         permanent: false,
-  //       },
-  //     };
-  //   }
 
   const userId = session.user.id;
 

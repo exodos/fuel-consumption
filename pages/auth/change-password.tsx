@@ -6,7 +6,11 @@ import * as Yup from "yup";
 import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import SignInLayout from "@/layout/signin-layout";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 import Head from "next/head";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { gql } from "apollo-server-micro";
@@ -134,7 +138,7 @@ const UserChangePassword = ({
                   initialValues={formValues || initialValues}
                   validationSchema={validate}
                   onSubmit={onSubmit}
-                  enableReinitialize={true}
+                  // enableReinitialize={true}
                 >
                   <Form className="space-y-0">
                     <div>
@@ -232,7 +236,9 @@ const UserChangePassword = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session) {
@@ -243,14 +249,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  //   else if (!session.user.adminRestPassword) {
-  //     return {
-  //       redirect: {
-  //         destination: "/",
-  //         permanent: false,
-  //       },
-  //     };
-  //   }
 
   const userId = session.user.id;
 

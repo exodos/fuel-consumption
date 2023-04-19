@@ -18,7 +18,6 @@ declare module "next-auth" {
       middleName: string;
       lastName: string;
       email: string;
-      password: string;
       mobileNumber: string;
       adminResetPassword: boolean;
       role: Role;

@@ -44,7 +44,7 @@ async function main() {
         ]),
         day: faker.date.between(
           "2023-03-08T16:17:14.666Z",
-          "2023-04-11T16:17:14.666Z"
+          "2023-04-19T16:17:14.666Z"
         ),
         sourceId: faker.helpers.arrayElement(["1", "2", "3"]),
         fuelStationRegion: faker.helpers.arrayElement([
@@ -135,7 +135,7 @@ async function main() {
         ]),
         week: faker.date.between(
           "2022-09-01T16:17:14.666Z",
-          "2023-04-11T16:17:14.666Z"
+          "2023-04-19T16:17:14.666Z"
         ),
         sourceId: faker.helpers.arrayElement(["1", "2", "3"]),
         fuelStationRegion: faker.helpers.arrayElement([
@@ -226,7 +226,7 @@ async function main() {
         ]),
         month: faker.date.between(
           "2022-08-01T16:17:14.666Z",
-          "2023-04-11T16:17:14.666Z"
+          "2023-04-19T16:17:14.666Z"
         ),
         sourceId: faker.helpers.arrayElement(["1", "2", "3"]),
         fuelStationRegion: faker.helpers.arrayElement([
@@ -325,7 +325,7 @@ async function main() {
         plateNumber: faker.vehicle.vrm(),
         paidAt: faker.date.between(
           "2022-08-08T16:17:14.666Z",
-          "2023-04-11T16:17:14.666Z"
+          "2023-04-19T16:17:14.666Z"
         ),
         debitAccountNumber: faker.finance.account(),
         creditAccountNumber: faker.finance.account(),

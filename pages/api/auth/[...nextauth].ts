@@ -7,10 +7,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      id: "credentials",
+      name: "My-Credentials",
       credentials: {
         email: { label: "email", type: "email" },
-        password: { label: "Password", type: "password" },
+        password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
         const user: User = await prisma.user.findFirst({
@@ -46,6 +47,7 @@ export const authOptions: NextAuthOptions = {
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
+
     jwt: async ({ token, user }) => {
       return { ...token, ...user };
     },
