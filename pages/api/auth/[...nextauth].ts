@@ -8,29 +8,33 @@ export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       id: "credentials",
-      name: "My-Credentials",
+      name: "Credentials",
       credentials: {
         email: { label: "email", type: "email" },
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        const user: User = await prisma.user.findFirst({
-          where: {
-            email: credentials.email,
-          },
-        });
-        if (!user) {
-          return null;
-        }
-        const isValid = await verifyPassword(
-          credentials.password,
-          user.password
-        );
-        if (isValid) {
-          return user;
-        } else {
-          console.log("Hash Not Matched To Logging In");
-          return null;
+        try {
+          const user = await prisma.user.findFirst({
+            where: {
+              email: credentials?.email,
+            },
+          });
+          if (!user) {
+            return null;
+          }
+          const isValid = await verifyPassword(
+            credentials?.password,
+            user.password
+          );
+          if (isValid) {
+            return user;
+          } else {
+            console.log("Hash Not Matched To Logging In");
+            return null;
+          }
+        } catch (err) {
+          console.log(err);
         }
       },
     }),
@@ -43,9 +47,7 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     redirect: async ({ url, baseUrl }) => {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
+      return url.startsWith(baseUrl) ? baseUrl : url;
     },
 
     jwt: async ({ token, user }) => {

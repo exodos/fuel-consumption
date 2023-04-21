@@ -1,7 +1,7 @@
 const errors = {
   Signin: "Try signing with a different account.",
   Callback: "Try signing with a different account.",
-  CredentialsSignin: "Incorrect Email Or Password!! Please Try Again",
+  CredentialsSignin: "Wrong credentials. Try again",
   default: "Unable to sign in.",
 };
 

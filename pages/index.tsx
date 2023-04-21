@@ -1,7 +1,6 @@
 import { InferGetServerSidePropsType } from "next";
 import SiteHeader from "../components/layout/header";
 import { baseUrl } from "@/lib/config";
-import DisplayCount from "@/components/dashboard/count-display";
 import DisplayDailyDashBoard from "@/components/dashboard/display-daily";
 import DisplayWeeklyDashBoard from "@/components/dashboard/display-weekly";
 import DisplayMonthlyDashBoard from "@/components/dashboard/display-monthly";
@@ -10,6 +9,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import DisplayRegionData from "@/components/dashboard/display-region";
 import DisplayGasStationData from "@/components/dashboard/display-gas-station";
 import DisplayTransaction from "@/components/dashboard/transaction-display";
+import DisplaySourceData from "@/components/dashboard/display-transaction-source";
 
 const Home = ({
       dailyData,
@@ -18,14 +18,19 @@ const Home = ({
       regionData,
     }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
-    allTransaction,
+    // allTransaction,
     totalTransactionBySource,
     totalPaymentBySource,
     totalDailyTransaction,
     totalDailyPayment,
-    allPayment,
-    totalCountSum,
+    // allPayment,
+    // totalCountSum,
     totalDailyFuel,
+    totalTransactionBySourcePie,
+    totalPaymentBySourcePie,
+    totalTransactionPayment,
+    totalTransactionPaymentWithSubsidy,
+    totalTransactionPaymentWithOutSubsidy,
   } = dailyData ?? {};
   const { totalWeeklyTransaction, totalWeeklyPayment, totalWeeklyFuel } =
     weeklyData ?? {};
@@ -42,10 +47,22 @@ const Home = ({
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-2">
         <div>
           <DisplayTransaction
-            allTransaction={allTransaction}
-            totalTransactionBySource={totalTransactionBySource}
-            allPayment={allPayment}
-            totalPaymentBySource={totalPaymentBySource}
+            totalTransactionPayment={totalTransactionPayment}
+            totalTransactionPaymentWithSubsidy={
+              totalTransactionPaymentWithSubsidy
+            }
+            totalTransactionPaymentWithOutSubsidy={
+              totalTransactionPaymentWithOutSubsidy
+            }
+          />
+        </div>
+        <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
+          <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
+            Total Transaction and Payment By Source
+          </h1>
+          <DisplaySourceData
+            totalTransactionBySourcePie={totalTransactionBySourcePie}
+            totalPaymentBySourcePie={totalPaymentBySourcePie}
           />
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
@@ -142,6 +159,7 @@ export const getServerSideProps = async ({ req, res }) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+
   return {
     props: {
       session,

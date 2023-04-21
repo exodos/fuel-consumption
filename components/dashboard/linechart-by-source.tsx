@@ -15,6 +15,7 @@ export const LineChartBySource = ({ data, colors, legendFor, legendType }) => {
       }}
       yFormat=" >-,.2f"
       curve="cardinal"
+      // curve="linear"
       axisTop={null}
       axisRight={null}
       axisBottom={{
@@ -31,16 +32,18 @@ export const LineChartBySource = ({ data, colors, legendFor, legendType }) => {
         tickRotation: 0,
         format: ".2s",
         legend: legendType,
-        legendOffset: -45,
+        legendOffset: -40,
         legendPosition: "middle",
       }}
       enableGridX={false}
-      // colors={{ scheme: "dark2" }}
       colors={colors}
       pointSize={4}
       pointColor={{ theme: "background" }}
       pointBorderWidth={2}
       pointBorderColor={{ from: "serieColor" }}
+      pointLabel={function (t) {
+        return t.x + ": " + t.y;
+      }}
       pointLabelYOffset={-12}
       enableArea={false}
       useMesh={true}
@@ -56,7 +59,8 @@ export const LineChartBySource = ({ data, colors, legendFor, legendType }) => {
             <div>
               y:{" "}
               <span className="text text-base font-semibold">
-                {`${point.data.y}`}
+                {/* {`${point.data.y}`} */}
+                {`${point.data.y.toLocaleString()}`}
               </span>
             </div>
           </div>

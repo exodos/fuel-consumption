@@ -1,7 +1,4 @@
-import { FuelChart } from "./fuel-trend";
 import { LineChartBySource } from "./linechart-by-source";
-import { PaymentTrend } from "./payement-trend";
-import { TransactionTrend } from "./transaction-trend.";
 
 const DisplayDailyDashBoard = ({
   totalDailyTransaction,

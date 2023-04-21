@@ -11,10 +11,11 @@ import SignInError from "./signin-error";
 import SiteHeader from "@/components/layout/header";
 
 const SignIn = ({
-  csrfToken,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      csrfToken,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
+  const { error } = useRouter().query;
 
   const validate = Yup.object().shape({
     email: Yup.string()
@@ -143,7 +144,8 @@ const SignIn = ({
                       />
                     </div>
                   </div>
-                  <div className="text-red-400 text-md text-center rounded p-1">
+
+                  <div className="text-red-400 text-sm p-1">
                     {error && <SignInError error={error} />}
                   </div>
 

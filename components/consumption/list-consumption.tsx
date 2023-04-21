@@ -299,13 +299,13 @@ const ListConsumption = ({ consumptionData }) => {
                   "border-t border-gray-200 px-4 flex items-center justify-between sm:px-0 mt-6"
                 }
                 pageClassName={
-                  "border-transparent text-gray-700 hover:text-gray-900 hover:border-black border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium"
+                  "border-transparent text-gray-700 hover:text-gray-900 hover:border-black border-t-2  px-4 inline-flex items-center text-sm font-medium"
                 }
                 previousLinkClassName={
-                  "relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  "relative inline-flex items-center rounded-md border border-gray-300 ml-10 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 }
                 nextLinkClassName={
-                  "relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  "relative inline-flex items-center rounded-md border border-gray-300 mr-10 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                 }
                 activeClassName={
                   "border-t-2 border-lightBlue text-deepGreen font-semibold"

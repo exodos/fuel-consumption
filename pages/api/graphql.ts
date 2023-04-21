@@ -1,5 +1,4 @@
 import { ApolloServer } from "apollo-server-micro";
-// import {ApolloServer} from '@apollo/server'
 import type { NextApiRequest, NextApiResponse, PageConfig } from "next";
 import { createContext } from "../../graphql/context";
 import { schema } from "../../graphql/schema";
