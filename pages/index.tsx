@@ -10,13 +10,14 @@ import DisplayRegionData from "@/components/dashboard/display-region";
 import DisplayGasStationData from "@/components/dashboard/display-gas-station";
 import DisplayTransaction from "@/components/dashboard/transaction-display";
 import DisplaySourceData from "@/components/dashboard/display-transaction-source";
+import DisplaySource from "@/components/dashboard/diaplay-source";
 
 const Home = ({
-      dailyData,
-      weeklyData,
-      monthlyData,
-      regionData,
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  dailyData,
+  weeklyData,
+  monthlyData,
+  regionData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     // allTransaction,
     totalTransactionBySource,
@@ -56,11 +57,21 @@ const Home = ({
             }
           />
         </div>
-        <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
+        {/* <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
           <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
             Total Transaction and Payment By Source
           </h1>
           <DisplaySourceData
+            totalTransactionBySourcePie={totalTransactionBySourcePie}
+            totalPaymentBySourcePie={totalPaymentBySourcePie}
+          />
+        </div> */}
+
+        <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
+          <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
+            Total Transaction and Payment Via Source
+          </h1>
+          <DisplaySource
             totalTransactionBySourcePie={totalTransactionBySourcePie}
             totalPaymentBySourcePie={totalPaymentBySourcePie}
           />

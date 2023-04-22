@@ -6,7 +6,7 @@ const RegionalPercentageTrend = ({ data, colors }) => (
     margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
     // valueFormat=" >-0,.2f"
     valueFormat={(value) => `${value}%`}
-    innerRadius={0.5}
+    innerRadius={0.6}
     padAngle={0.7}
     cornerRadius={3}
     activeOuterRadiusOffset={8}
