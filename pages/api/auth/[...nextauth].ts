@@ -49,7 +49,6 @@ export const authOptions: NextAuthOptions = {
     redirect: async ({ url, baseUrl }) => {
       return url.startsWith(baseUrl) ? baseUrl : url;
     },
-
     jwt: async ({ token, user }) => {
       return { ...token, ...user };
     },
