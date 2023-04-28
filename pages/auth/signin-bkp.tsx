@@ -10,11 +10,12 @@ import { useRouter } from "next/router";
 import SignInError from "./signin-error";
 import SiteHeader from "@/components/layout/header";
 
-const SignIn = ({
+const SignInBkp = ({
       csrfToken,
     }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
+  const { error } = useRouter().query;
 
   const validate = Yup.object().shape({
     email: Yup.string()
@@ -23,6 +24,7 @@ const SignIn = ({
       .required("Email is required"),
     password: Yup.string().required("Password Is Required"),
   });
+
   return (
     <>
       <SiteHeader
@@ -57,12 +59,12 @@ const SignIn = ({
                 </div>
                 <div className="sm:flex-auto">
                   {/* <Image
-                    className="h-20 w-auto"
-                    src={"/logos/ethio-logo.svg"}
-                    alt="Ethiotelecom logo"
-                    width={350}
-                    height={120}
-                  /> */}
+                  className="h-8 w-auto"
+                  src="/logos/TeleBirr Logos.svg"
+                  alt="Ethiotelecom logo"
+                  width={200}
+                  height={90}
+                /> */}
                 </div>
                 <div className="sm:mt-0 sm:mr-8 ml-12 sm:flex-none">
                   <Image
@@ -82,7 +84,82 @@ const SignIn = ({
             </div>
             <div className="mt-1 sm:mx-auto sm:w-full sm:max-w-md justify-center items-center">
               <div className="bg-white px-10 py-8 shadow sm:rounded-lg sm:px-10">
-                <Formik
+                <form
+                  className="space-y-6"
+                  method="post"
+                  action="/api/auth/callback/credentials"
+                >
+                  <div>
+                    <input
+                      name="csrfToken"
+                      type="hidden"
+                      defaultValue={csrfToken}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="hidden text-sm font-medium text-gray-700"
+                    >
+                      Email address
+                    </label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <MdEmail
+                          className="h-6 w-6 text-lightGreen"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <input
+                        name="email"
+                        type="email"
+                        // autoComplete="email"
+                        className="block w-full rounded-md border-gray-300 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
+                        placeholder="Email Address"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="password"
+                      className="hidden text-sm font-medium text-gray-700"
+                    >
+                      Password
+                    </label>
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <RiLockPasswordFill
+                          className="h-6 w-6 text-lightGreen"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <input
+                        name="password"
+                        type="password"
+                        // autoComplete="current-password"
+                        className="block w-full rounded-md  border-gray-50 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
+                        placeholder="Password"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="text-red-400 text-sm p-1">
+                    {error && <SignInError error={error} />}
+                  </div>
+
+                  <div className="pt-4">
+                    <button
+                      type="submit"
+                      className="flex w-full justify-center rounded-3xl border border-transparent bg-lightGreen py-3 px-2 text-base font-semibold text-white shadow-sm hover:bg-deepGreen focus:outline-none focus:ring-2 focus:ring-darkGrayHv focus:ring-offset-2"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                </form>
+
+                {/* <Formik
                   initialValues={{ email: "", password: "" }}
                   validationSchema={validate}
                   onSubmit={async (values, { setSubmitting }) => {
@@ -90,7 +167,7 @@ const SignIn = ({
                       redirect: false,
                       email: values.email,
                       password: values.password,
-                      callbackUrl: `${window.location.origin}`,
+                      callbackUrl: "/",
                     });
 
                     if (res?.error) {
@@ -121,7 +198,7 @@ const SignIn = ({
                           <Field
                             name="email"
                             type="email"
-                            autoComplete="email"
+                            // autoComplete="email"
                             className="block w-full rounded-md border-gray-300 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
                             placeholder="Email Address"
                           />
@@ -130,7 +207,6 @@ const SignIn = ({
                           </div>
                         </div>
                       </div>
-                      {/* <div className="space-y-3"> */}
 
                       <div>
                         <label
@@ -149,7 +225,7 @@ const SignIn = ({
                           <Field
                             name="password"
                             type="password"
-                            autoComplete="current-password"
+                            // autoComplete="current-password"
                             className="block w-full rounded-md  border-gray-50 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
                             placeholder="Password"
                           />
@@ -178,7 +254,7 @@ const SignIn = ({
                       </div>
                     </form>
                   )}
-                </Formik>
+                </Formik> */}
               </div>
             </div>
           </div>
@@ -198,4 +274,4 @@ export const getServerSideProps = async (
   };
 };
 
-export default SignIn;
+export default SignInBkp;

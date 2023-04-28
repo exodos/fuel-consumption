@@ -53,17 +53,35 @@ CREATE TABLE "consumption" (
 );
 
 -- CreateTable
+CREATE TABLE "today_consumption" (
+    "id" SERIAL NOT NULL,
+    "amount" DOUBLE PRECISION,
+    "fuel_in_liters" DOUBLE PRECISION,
+    "fuel_type" TEXT,
+    "fuel_station_id" TEXT,
+    "day" TIMESTAMP(3),
+    "source_id" TEXT NOT NULL,
+    "fuel_station_region" TEXT,
+    "company_id" TEXT,
+    "transaction_count" INTEGER,
+    "reason_type_code" TEXT,
+
+    CONSTRAINT "today_consumption_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "daily_consumption" (
     "id" SERIAL NOT NULL,
     "amount" DOUBLE PRECISION,
     "fuel_in_liters" DOUBLE PRECISION,
     "fuel_type" TEXT,
     "fuel_station_id" TEXT,
-    "day" TIMESTAMP(3) NOT NULL,
+    "day" TIMESTAMP(3),
     "source_id" TEXT NOT NULL,
     "fuel_station_region" TEXT,
     "company_id" TEXT,
     "transaction_count" INTEGER,
+    "reason_type_code" TEXT,
 
     CONSTRAINT "daily_consumption_pkey" PRIMARY KEY ("id")
 );
@@ -75,11 +93,12 @@ CREATE TABLE "weekly_consumption" (
     "fuel_in_liters" DOUBLE PRECISION,
     "fuel_type" TEXT,
     "fuel_station_id" TEXT,
-    "week" TIMESTAMP(3) NOT NULL,
+    "week" TIMESTAMP(3),
     "source_id" TEXT,
     "fuel_station_region" TEXT,
     "company_id" TEXT,
     "transaction_count" INTEGER,
+    "reason_type_code" TEXT,
 
     CONSTRAINT "weekly_consumption_pkey" PRIMARY KEY ("id")
 );
@@ -96,6 +115,7 @@ CREATE TABLE "monthly_consumption" (
     "fuel_station_region" TEXT,
     "company_id" TEXT,
     "transaction_count" INTEGER,
+    "reason_type_code" TEXT,
 
     CONSTRAINT "monthly_consumption_pkey" PRIMARY KEY ("id")
 );
@@ -105,6 +125,9 @@ CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_mobile_number_key" ON "user"("mobile_number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "today_consumption_fuel_type_fuel_station_id_source_id_day_key" ON "today_consumption"("fuel_type", "fuel_station_id", "source_id", "day");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "daily_consumption_fuel_type_fuel_station_id_source_id_day_key" ON "daily_consumption"("fuel_type", "fuel_station_id", "source_id", "day");

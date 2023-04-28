@@ -5,6 +5,8 @@ import {
   endOfToday,
   subWeeks,
   eachWeekOfInterval,
+  startOfWeek,
+  endOfWeek,
 } from "date-fns";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
@@ -32,7 +34,10 @@ const getLastSixWeeks = () => {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const weekYears = getLastSixWeeks();
   const endW = endOfToday();
-  const startW = subWeeks(endW, 5);
+  const startW = subWeeks(endW, 6);
+  const today = new Date();
+  const cStartW = startOfWeek(today, { weekStartsOn: 1 });
+  const cEndW = endOfWeek(today, { weekStartsOn: 1 });
 
   let weekSummary: weeklyData = {
     totalWeeklyTransaction: undefined,
@@ -53,7 +58,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    weekSummary.totalWeeklyTransaction = _.chain(weeklyQuery)
+    const currentWeekQuery = await prisma.currentWeeklyConsumption.findMany({
+      where: {
+        week: {
+          lte: cEndW,
+          gte: cStartW,
+        },
+      },
+      orderBy: {
+        week: "asc",
+      },
+    });
+
+    const allWeekQuery = _.concat(weeklyQuery, currentWeekQuery);
+
+    weekSummary.totalWeeklyTransaction = _.chain(allWeekQuery)
       .groupBy((tr) => tr.sourceId)
       .mapValues((perSourceId, sourceId) => {
         const data = _.chain(perSourceId)
@@ -87,7 +106,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return { id, data };
       });
 
-    weekSummary.totalWeeklyPayment = _.chain(weeklyQuery)
+    weekSummary.totalWeeklyPayment = _.chain(allWeekQuery)
       .groupBy((tr) => tr.sourceId)
       .mapValues((perSourceId, sourceId) => {
         const data = _.chain(perSourceId)
@@ -120,7 +139,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
         return { id, data };
       });
-    weekSummary.totalWeeklyFuel = _.chain(weeklyQuery)
+    weekSummary.totalWeeklyFuel = _.chain(allWeekQuery)
       .groupBy((tr) => tr.sourceId)
       .mapValues((perSourceId, sourceId) => {
         const data = _.chain(perSourceId)

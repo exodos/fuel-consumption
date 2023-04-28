@@ -92,6 +92,8 @@ export const LineChartBySource = ({ data, colors, legendFor, legendType }) => {
           ],
         },
       ]}
+      animate={true}
+      // motionConfig="default"
     />
   );
 };

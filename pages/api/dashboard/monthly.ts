@@ -1,10 +1,12 @@
-import _ from "lodash";
+import _, { flatten, result } from "lodash";
 import {
   startOfToday,
   format,
   endOfToday,
   subMonths,
   eachMonthOfInterval,
+  endOfMonth,
+  startOfMonth,
 } from "date-fns";
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
@@ -14,6 +16,31 @@ type monthlyData = {
   totalMonthlyTransaction: any;
   totalMonthlyPayment: any;
   totalMonthlyFuel: any;
+};
+
+// const mergeArrayObjects = (arr1, arr2) => {
+//   return arr1.map((item, i) => {
+//     if (item.id === arr2[i].id) {
+//       return Object.assign({}, item, arr2[i]);
+//     }
+//   });
+// };
+
+const deepMerge = (obj1) => {
+  const result = [];
+  obj1.forEach((object: any) => {
+    const existing = result.filter((item) => item.id == object.id);
+    if (existing.length) {
+      const existingIndex = result.indexOf(existing[0]);
+      result[existingIndex].data = result[existingIndex].data.concat(
+        object.data
+      );
+    } else {
+      if (typeof object.data == "string") object.data = [object.data];
+      result.push(object);
+    }
+  });
+  return result;
 };
 
 const getLastSixMonths = () => {
@@ -31,6 +58,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const monthYears = getLastSixMonths();
   const endM = endOfToday();
   const startM = subMonths(endM, 5);
+  const today = new Date();
+
+  const cEndM = endOfMonth(today);
+  const cStartM = startOfMonth(today);
 
   let monthlySummary: monthlyData = {
     totalMonthlyTransaction: undefined,
@@ -51,7 +82,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    monthlySummary.totalMonthlyTransaction = _.chain(monthlyQuery)
+    const currentMonthlyQuery = await prisma.currentMonthlyConsumption.findMany(
+      {
+        where: {
+          month: {
+            lte: cEndM,
+            gte: cStartM,
+          },
+        },
+        orderBy: {
+          month: "asc",
+        },
+      }
+    );
+
+    const allMonthQuery = _.concat(monthlyQuery, currentMonthlyQuery);
+
+    monthlySummary.totalMonthlyTransaction = _.chain(allMonthQuery)
       .groupBy((tr) => tr.sourceId)
       .mapValues((perSourceId, sourceId) => {
         const data = _.chain(perSourceId)
@@ -85,7 +132,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return { id, data };
       });
 
-    monthlySummary.totalMonthlyPayment = _.chain(monthlyQuery)
+    monthlySummary.totalMonthlyPayment = _.chain(allMonthQuery)
       .groupBy((tr) => tr.sourceId)
       .mapValues((perSourceId, sourceId) => {
         const data = _.chain(perSourceId)
@@ -119,7 +166,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return { id, data };
       });
 
-    monthlySummary.totalMonthlyFuel = _.chain(monthlyQuery)
+    monthlySummary.totalMonthlyFuel = _.chain(allMonthQuery)
       .groupBy((tr) => tr.sourceId)
       .mapValues((perSourceId, sourceId) => {
         const data = _.chain(perSourceId)

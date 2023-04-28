@@ -1,51 +1,43 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import { prisma } from "../../../lib/prisma";
-import { User } from "@prisma/client";
-import { verifyPassword } from "../../../lib/auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { baseUrl } from "@/lib/config";
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      id: "credentials",
-      name: "Credentials",
+      name: "",
       credentials: {
         email: { label: "email", type: "email" },
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-        try {
-          const user = await prisma.user.findFirst({
-            where: {
-              email: credentials?.email,
-            },
-          });
-          if (!user) {
-            return null;
-          }
-          const isValid = await verifyPassword(
-            credentials?.password,
-            user.password
-          );
-          if (isValid) {
-            return user;
-          } else {
-            console.log("Hash Not Matched To Logging In");
-            return null;
-          }
-        } catch (err) {
-          console.log(err);
+        const response = await fetch(baseUrl + `/api/user`, {
+          method: "POST",
+          body: JSON.stringify(credentials),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const user = await response.json();
+
+        if (response.ok && user) {
+          return user;
         }
+        return null;
       },
     }),
   ],
 
   pages: {
     signIn: "/auth/signin",
+    // error:"/auth/signin"
   },
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
+    // signIn: async ({ user, account, profile }) => {
+    //   return user ? true : false;
+    // },
     redirect: async ({ url, baseUrl }) => {
       return url.startsWith(baseUrl) ? baseUrl : url;
     },

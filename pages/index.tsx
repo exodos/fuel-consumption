@@ -9,29 +9,27 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import DisplayRegionData from "@/components/dashboard/display-region";
 import DisplayGasStationData from "@/components/dashboard/display-gas-station";
 import DisplayTransaction from "@/components/dashboard/transaction-display";
-import DisplaySourceData from "@/components/dashboard/display-transaction-source";
 import DisplaySource from "@/components/dashboard/diaplay-source";
+import DisplayDailyWithSubsidy from "@/components/dashboard/diaplay-daily-with-subsidy";
 
 const Home = ({
-  dailyData,
-  weeklyData,
-  monthlyData,
-  regionData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      dailyData,
+      weeklyData,
+      monthlyData,
+      regionData,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
-    // allTransaction,
-    totalTransactionBySource,
-    totalPaymentBySource,
     totalDailyTransaction,
     totalDailyPayment,
-    // allPayment,
-    // totalCountSum,
     totalDailyFuel,
     totalTransactionBySourcePie,
     totalPaymentBySourcePie,
     totalTransactionPayment,
     totalTransactionPaymentWithSubsidy,
     totalTransactionPaymentWithOutSubsidy,
+    totalDailyTransactionBySubsidy,
+    totalDailyPaymentBySubsidy,
+    totalDailyFuelBySubsidy,
   } = dailyData ?? {};
   const { totalWeeklyTransaction, totalWeeklyPayment, totalWeeklyFuel } =
     weeklyData ?? {};
@@ -57,16 +55,6 @@ const Home = ({
             }
           />
         </div>
-        {/* <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
-          <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
-            Total Transaction and Payment By Source
-          </h1>
-          <DisplaySourceData
-            totalTransactionBySourcePie={totalTransactionBySourcePie}
-            totalPaymentBySourcePie={totalPaymentBySourcePie}
-          />
-        </div> */}
-
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
           <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
             Total Transaction and Payment Via Source
@@ -74,6 +62,17 @@ const Home = ({
           <DisplaySource
             totalTransactionBySourcePie={totalTransactionBySourcePie}
             totalPaymentBySourcePie={totalPaymentBySourcePie}
+          />
+        </div>
+        <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
+          <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
+            {/* Total Daily Transaction,Payment and Fuel With And Without Subsidy */}
+            Total Daily With And Without Subsidy Comparison
+          </h1>
+          <DisplayDailyWithSubsidy
+            totalDailyTransactionBySubsidy={totalDailyTransactionBySubsidy}
+            totalDailyPaymentBySubsidy={totalDailyPaymentBySubsidy}
+            totalDailyFuelBySubsidy={totalDailyFuelBySubsidy}
           />
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
@@ -154,7 +153,6 @@ export const getServerSideProps = async ({ req, res }) => {
     monthlyData = null,
     regionData = null;
 
-  // let dailyData;
   try {
     let [daily, weekly, monthly, region] = await Promise.all([
       await fetch(baseUrl + `/api/dashboard/daily`),
@@ -170,6 +168,8 @@ export const getServerSideProps = async ({ req, res }) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
+
+  // console.log(session);
 
   return {
     props: {

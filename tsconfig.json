@@ -20,6 +20,7 @@
       "@/layout/*": ["components/layout/*"],
       "@/vehicle/*": ["components/vehicle/*"],
       "@/dashboard/*": ["components/dashboard/*"],
+      "@/lib/*": ["lib/*"],
       "@/store/*": ["store/*"]
     }
   },
