@@ -1,22 +1,20 @@
+import { applyMiddleware, getRateLimitMiddlewares } from "@/my-middleware";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/auth";
-import { rateLimit } from "@/lib/rate-limit";
 
-const limiter = rateLimit({
-  interval: 60 * 1000, // 60 seconds
-  uniqueTokenPerInterval: 500, // Max 500 users per second
-});
+const middlewares = getRateLimitMiddlewares({ limit: 10 }).map(applyMiddleware);
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { email, password } = req.body;
   try {
-    await limiter.check(res, 10, "CACHE_TOKEN"); // 10 requests per minute
+    await Promise.all(middlewares.map((middleware) => middleware(req, res)));
     const checkUser = await prisma.user.findFirst({
       where: {
         email: email,
       },
     });
+
     if (checkUser) {
       const isValid = await verifyPassword(password, checkUser.password);
       if (!isValid) {
@@ -37,11 +35,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(200).json(user);
       }
     } else {
-      res.status(404).json("User Not Found");
+      res.status(404).json("Wrong credentials!!");
     }
   } catch {
-    console.log("Rate limit exceeded");
-    res.status(429).json({ error: "Rate limit exceeded" });
+    return res.status(429).send("Too Many Requests");
   }
 };
 

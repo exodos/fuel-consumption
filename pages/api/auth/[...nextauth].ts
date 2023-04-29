@@ -35,9 +35,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    // signIn: async ({ user, account, profile }) => {
-    //   return user ? true : false;
-    // },
     redirect: async ({ url, baseUrl }) => {
       return url.startsWith(baseUrl) ? baseUrl : url;
     },

@@ -3,15 +3,8 @@ import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
 import { getSession, signOut, useSession } from "next-auth/react";
 
-import {
-  Bars3CenterLeftIcon,
-  BellIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
+import { BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { FaGasPump, FaHome, FaUserCircle } from "react-icons/fa";
 import Link from "next/link";
 import MyLink from "./my-link";
@@ -73,6 +66,14 @@ const NavBar = ({ children }: Props) => {
       query: query,
     });
     // }
+  };
+
+  const handleSignOut = async () => {
+    const data = await signOut({
+      redirect: false,
+      callbackUrl: "/auth/signin",
+    });
+    router.push(data.url);
   };
 
   return (
@@ -230,10 +231,7 @@ const NavBar = ({ children }: Props) => {
                           <Menu.Item>
                             {({ active }) => (
                               <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  signOut();
-                                }}
+                                onClick={() => signOut()}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
                                   "block px-5 py-2 text-sm text-gray-700"

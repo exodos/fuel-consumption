@@ -8,14 +8,15 @@ const ContentSecurityPolicy = `
   child-src 'none';
   style-src 'self';
   font-src 'self';
+  object-src 'none';
   form-action 'self';
   frame-ancestors 'none';
   frame-src 'self';
   img-src 'self';
   manifest-src 'self';
-  object-src 'none';
   prefetch-src 'self',
 `;
+
 const securityHeaders = [
   {
     key: "Strict-Transport-Security",

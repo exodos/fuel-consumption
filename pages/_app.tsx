@@ -25,8 +25,8 @@ export default function App({
   return (
     <SessionProvider
       session={session}
-      // refetchInterval={5 * 60}
-      // refetchOnWindowFocus={true}
+      refetchInterval={5 * 60}
+      refetchOnWindowFocus={true}
     >
       <ApolloProvider client={apolloClient}>
         <NotificationContextProvider>
