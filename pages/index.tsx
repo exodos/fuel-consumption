@@ -13,11 +13,11 @@ import DisplaySource from "@/components/dashboard/diaplay-source";
 import DisplayDailyWithSubsidy from "@/components/dashboard/diaplay-daily-with-subsidy";
 
 const Home = ({
-      dailyData,
-      weeklyData,
-      monthlyData,
-      regionData,
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  dailyData,
+  weeklyData,
+  monthlyData,
+  regionData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     totalDailyTransaction,
     totalDailyPayment,
@@ -161,12 +161,22 @@ export const getServerSideProps = async ({ req, res }) => {
       await fetch(baseUrl + `/api/dashboard/region-gas-station`),
     ]);
 
+    if (
+      daily.status !== 200 ||
+      weekly.status !== 200 ||
+      monthly.status !== 200 ||
+      region.status !== 200
+    ) {
+      throw new Error("Faile To Fetch!!");
+    }
+
     dailyData = await daily.json();
     weeklyData = await weekly.json();
     monthlyData = await monthly.json();
     regionData = await region.json();
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.log(err);
+    res.status(400).json({ message: err.message });
   }
 
   // console.log(session);

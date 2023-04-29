@@ -131,31 +131,32 @@ const NavBar = ({ children }: Props) => {
                 </div>
                 <div className="flex flex-1 justify-center px-4 lg:ml-6 lg:justify-end">
                   <div className="w-full max-w-lg lg:max-w-xl">
-                    {pathname !== "/" && (
-                      <>
-                        <label htmlFor="search" className="sr-only">
-                          Search
-                        </label>
-                        <div className="relative">
-                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <MagnifyingGlassIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
+                    {pathname !== "/" &&
+                      pathname !== "/auth/change-password" && (
+                        <>
+                          <label htmlFor="search" className="sr-only">
+                            Search
+                          </label>
+                          <div className="relative">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                              <MagnifyingGlassIcon
+                                className="h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                              />
+                            </div>
+                            <input
+                              id="search"
+                              name="search"
+                              className="block w-full border-transparent rounded-2xl bg-gray-100 py-1.5 pl-10 pr-3 text-gray-900 placeholder:text-gray-500 focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-0 focus:placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                              placeholder="Enter your keywords ..."
+                              type="search"
+                              onChange={(e) => {
+                                handleSearch(e.currentTarget.value);
+                              }}
                             />
                           </div>
-                          <input
-                            id="search"
-                            name="search"
-                            className="block w-full border-transparent rounded-2xl bg-gray-100 py-1.5 pl-10 pr-3 text-gray-900 placeholder:text-gray-500 focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-0 focus:placeholder:text-gray-400 sm:text-sm sm:leading-6"
-                            placeholder="Enter your keywords ..."
-                            type="search"
-                            onChange={(e) => {
-                              handleSearch(e.currentTarget.value);
-                            }}
-                          />
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
                   </div>
                 </div>
                 <div className="flex lg:hidden">

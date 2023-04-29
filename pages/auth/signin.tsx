@@ -11,8 +11,8 @@ import SignInError from "./signin-error";
 import SiteHeader from "@/components/layout/header";
 
 const SignIn = ({
-      csrfToken,
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  csrfToken,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [error, setError] = useState(null);
 
@@ -121,17 +121,15 @@ const SignIn = ({
                           <Field
                             name="email"
                             type="email"
-                            autoComplete="email"
                             className="block w-full rounded-md border-gray-300 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
                             placeholder="Email Address"
+                            autoComplete="off"
                           />
                           <div className="text-red-600  text-sm italic mt-1">
                             <ErrorMessage name="email" />
                           </div>
                         </div>
                       </div>
-                      {/* <div className="space-y-3"> */}
-
                       <div>
                         <label
                           htmlFor="password"
@@ -149,9 +147,9 @@ const SignIn = ({
                           <Field
                             name="password"
                             type="password"
-                            autoComplete="current-password"
                             className="block w-full rounded-md  border-gray-50 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
                             placeholder="Password"
+                            autoComplete="off"
                           />
                           <div className="text-red-600  text-sm italic mt-1">
                             <ErrorMessage name="password" />

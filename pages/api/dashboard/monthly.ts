@@ -18,31 +18,6 @@ type monthlyData = {
   totalMonthlyFuel: any;
 };
 
-// const mergeArrayObjects = (arr1, arr2) => {
-//   return arr1.map((item, i) => {
-//     if (item.id === arr2[i].id) {
-//       return Object.assign({}, item, arr2[i]);
-//     }
-//   });
-// };
-
-const deepMerge = (obj1) => {
-  const result = [];
-  obj1.forEach((object: any) => {
-    const existing = result.filter((item) => item.id == object.id);
-    if (existing.length) {
-      const existingIndex = result.indexOf(existing[0]);
-      result[existingIndex].data = result[existingIndex].data.concat(
-        object.data
-      );
-    } else {
-      if (typeof object.data == "string") object.data = [object.data];
-      result.push(object);
-    }
-  });
-  return result;
-};
-
 const getLastSixMonths = () => {
   const today = startOfToday();
   const twelveMonths = subMonths(today, 7);

@@ -1,17 +1,16 @@
 import { MdPassword } from "react-icons/md";
 import Image from "next/image";
 import { RiLockPasswordLine } from "react-icons/ri";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FormikValues } from "formik";
 import * as Yup from "yup";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import SignInLayout from "@/layout/signin-layout";
+import ReCAPTCHA from "react-google-recaptcha";
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
 } from "next";
-import Head from "next/head";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { gql } from "apollo-server-micro";
 import { useMutation } from "@apollo/client";
@@ -47,10 +46,16 @@ const UsersByID = gql`
   }
 `;
 
+const dev = process.env.NEXTAUTH_URL != "production";
+const rechaptcha_key = dev
+  ? process.env.NEXT_PUBLIC_LOCAL_RECHAPTCHA_SITE_KEY
+  : process.env.NEXT_PUBLIC_PRODUCTION_RECHAPTCHA_SITE_KEY;
+
 const ForceResetPassword = ({
-      data,
-      userId,
-    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  data,
+  userId,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const captchaRef = useRef(null);
   const [userPassword, setUserPassword] = useState(data.usersByID.password);
   const router = useRouter();
   const notificationCtx = useContext(NotificationContext);
@@ -73,8 +78,8 @@ const ForceResetPassword = ({
     newPassword: Yup.string()
       .required("Please Enter New Password")
       .matches(
-        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,}$/,
+        "Must Contain 12 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
       )
       .notOneOf(
         [Yup.ref("currentPassword"), null],
@@ -85,9 +90,7 @@ const ForceResetPassword = ({
       .oneOf([Yup.ref("newPassword"), null], "Passwords must match"),
   });
 
-  const [formValues, setFormValues] = useState(null);
-
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: FormikValues) => {
     await changeUserPassword({
       variables: {
         changeUserPasswordId: userId,
@@ -107,21 +110,22 @@ const ForceResetPassword = ({
           message: data.message || "Successfully Reset User Password",
           status: "success",
         });
-        signOut();
+        // signOut();
       },
-
-      //   update: (cache, { data }) => {
-      //     const cacheId = cache.identify(data.message);
-      //     cache.modify({
-      //       fields: {
-      //         messages: (existinFieldData, { toReference }) => {
-      //           return [...existinFieldData, toReference(cacheId)];
-      //         },
-      //       },
-      //     });
-      //   },
-    }).then(() => router.push("/"));
+    }).then(() => {
+      signOut(), router.push("/");
+    });
   };
+
+  const onReCAPTCHAChange = (captchaCode) => {
+    if (!captchaCode) {
+      return;
+    }
+    captchaRef.current.execute();
+
+    // captchaRef.current.reset();
+  };
+
   return (
     <>
       <SiteHeader
@@ -188,7 +192,6 @@ const ForceResetPassword = ({
                 initialValues={initialValues}
                 validationSchema={validate}
                 onSubmit={onSubmit}
-                // enableReinitialize={true}
               >
                 <Form className="space-y-0">
                   <div>
@@ -210,6 +213,7 @@ const ForceResetPassword = ({
                         type="password"
                         className="block w-full rounded-md  border-gray-50 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
                         placeholder="Enter Current Password"
+                        autoComplete="off"
                       />
                       <div className="text-red-600  text-sm italic mt-1">
                         <ErrorMessage name="currentPassword" />
@@ -235,6 +239,7 @@ const ForceResetPassword = ({
                         type="password"
                         className="block w-full rounded-md  border-gray-50 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
                         placeholder="New Password"
+                        autoComplete="off"
                       />
                       <div className="text-red-600  text-sm italic mt-1">
                         <ErrorMessage name="newPassword" />
@@ -260,10 +265,21 @@ const ForceResetPassword = ({
                         type="password"
                         className="block w-full rounded-md  border-gray-50 p-4 pl-10 focus:shadow-xl focus:border-darkGrayHv ring-1 ring-gray-400 sm:text-sm"
                         placeholder="Confirm Password"
+                        autoComplete="off"
                       />
                       <div className="text-red-600  text-sm italic mt-1">
                         <ErrorMessage name="confirmPassword" />
                       </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="relative pt-3 pb-2">
+                      <ReCAPTCHA
+                        ref={captchaRef}
+                        size="normal"
+                        sitekey={rechaptcha_key}
+                        onChange={onReCAPTCHAChange}
+                      />
                     </div>
                   </div>
                   <div className="pt-4">

@@ -10,6 +10,12 @@ type reportDataType = {
   gasStationFuel: any;
 };
 
+export const config = {
+  api: {
+    responseLimit: "8mb",
+  },
+};
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let regionData: reportDataType = {
     amountMapping: undefined,
@@ -17,20 +23,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     gasStationAmount: undefined,
     gasStationFuel: undefined,
   };
-  //   const regionQuery = await prisma.$queryRaw`
-  //     SELECT fuel_station_region, SUM(camount), r.region_name as region_name, r.id as id
-  //     FROM consumption c, region_mapping r
-  //     JOIN region_mapping  on r.id=c.fuel_station_region
-  //     GROUP BY c.fuel_station_region, r.region_name
-  //     ORDER BY c.fuel_station_region DESC
-  // `;
-
-  //   const regionQuery = await prisma.$queryRaw`
-  //               SELECT C.fuel_station_region, SUM(c.amount) as amount, r.region_name, r.id as regionId
-  //               FROM consumption c, region_mapping r
-  //               WHERE C.fuel_station_region=r.id
-  //               GROUP BY c.fuel_station_region, r.id
-  //        `;
 
   let regionQuery = null,
     gasStationQuery = null;
@@ -56,16 +48,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   regionData.amountMapping = regionQuery.map((item, v) => {
     return {
-      id: regionName[v].name,
-      label: regionName[v].name,
+      id: regionName[v]?.name,
+      label: regionName[v]?.name,
       value: _.round((item.amount / totalRegionAmount._sum.amount) * 100, 2),
     };
   });
 
   regionData.fuelMapping = regionQuery.map((item, v) => {
     return {
-      id: regionName[v].name,
-      label: regionName[v].name,
+      id: regionName[v]?.name,
+      label: regionName[v]?.name,
       value: _.round(
         (item.fuel / totalRegionAmount._sum.fuelInLiters) * 100,
         2
@@ -75,16 +67,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   regionData.gasStationAmount = gasStationQuery.map((item, v) => {
     return {
-      id: companyName[v].name,
-      label: companyName[v].name,
+      id: companyName[v]?.name,
+      label: companyName[v]?.name,
       value: _.round((item.amount / totalRegionAmount._sum.amount) * 100, 2),
     };
   });
 
   regionData.gasStationFuel = gasStationQuery.map((item, v) => {
     return {
-      id: companyName[v].name,
-      label: companyName[v].name,
+      id: companyName[v]?.name,
+      label: companyName[v]?.name,
       value: _.round(
         (item.fuel / totalRegionAmount._sum.fuelInLiters) * 100,
         2

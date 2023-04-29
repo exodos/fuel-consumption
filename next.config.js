@@ -1,10 +1,20 @@
 /** @type {import('next').NextConfig} */
+// const nextSafe = require("next-safe");
+// const isDev = process.env.NODE_ENV !== "production";
 
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self';
+  child-src 'none';
   style-src 'self';
-  font-src 'self';  
+  font-src 'self';
+  form-action 'self';
+  frame-ancestors 'none';
+  frame-src 'self';
+  img-src 'self';
+  manifest-src 'self';
+  object-src 'none';
+  prefetch-src 'self',
 `;
 const securityHeaders = [
   {
@@ -23,20 +33,16 @@ const securityHeaders = [
     key: "Referrer-Policy",
     value: "origin-when-cross-origin",
   },
-  // {
-  //   key: "Content-Security-Policy",
-  //   value: ContentSecurityPolicy.replace(/\s{2,}/g, " ").trim(),
-  // },
+  {
+    key: "Content-Security-Policy",
+    value: ContentSecurityPolicy.replace(/\s{2,}/g, " ").trim(),
+  },
 ];
 
 const nextConfig = {
   reactStrictMode: false,
   async headers() {
     return [
-      {
-        source: "/:path*",
-        headers: securityHeaders,
-      },
       {
         source: "/api/graphql",
         headers: [
@@ -47,6 +53,10 @@ const nextConfig = {
           },
           { key: "Access-Control-Allow-Headers", value: "Content-Type" },
         ],
+      },
+      {
+        source: "/:path*",
+        headers: securityHeaders,
       },
     ];
   },

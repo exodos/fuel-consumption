@@ -9,7 +9,7 @@ const TransactionDonatChart = ({ data, textHeader, colors }) => (
     <Title>{textHeader}</Title>
     <DonutChart
       className="mt-6 w-full h-[350px]"
-      data={data}
+      data={data ?? []}
       category={"value"}
       index={"label"}
       valueFormatter={valueFormatter}
@@ -17,7 +17,7 @@ const TransactionDonatChart = ({ data, textHeader, colors }) => (
     />
     <Legend
       className="mt-3 justify-center translate-x-0 translate-y-5 space-x-6"
-      categories={data.map((item) => item.label)}
+      categories={data?.map((item) => item?.label)}
       colors={colors}
     />
   </Card>

@@ -2,7 +2,7 @@ import { ResponsivePie } from "@nivo/pie";
 
 const RegionalPercentageTrend = ({ data, colors }) => (
   <ResponsivePie
-    data={data}
+    data={data ?? []}
     margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
     // valueFormat=" >-0,.2f"
     valueFormat={(value) => `${value}%`}
@@ -10,7 +10,7 @@ const RegionalPercentageTrend = ({ data, colors }) => (
     padAngle={0.7}
     cornerRadius={3}
     activeOuterRadiusOffset={8}
-    colors={colors}
+    colors={colors ?? []}
     borderWidth={1}
     borderColor={{
       from: "color",
