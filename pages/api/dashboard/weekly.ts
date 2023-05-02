@@ -16,6 +16,9 @@ type weeklyData = {
   totalWeeklyTransaction: any;
   totalWeeklyPayment: any;
   totalWeeklyFuel: any;
+  totalWeeklyTransactionBySubsidy: any;
+  totalWeeklyPaymentBySubsidy: any;
+  totalWeeklyFuelBySubsidy: any;
 };
 
 const getLastSixWeeks = () => {
@@ -43,6 +46,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     totalWeeklyTransaction: undefined,
     totalWeeklyPayment: undefined,
     totalWeeklyFuel: undefined,
+    totalWeeklyTransactionBySubsidy: undefined,
+    totalWeeklyPaymentBySubsidy: undefined,
+    totalWeeklyFuelBySubsidy: undefined,
   };
 
   try {
@@ -69,6 +75,197 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         week: "asc",
       },
     });
+
+    const weeklyWithSubsidy = await prisma.weeklyConsumption.findMany({
+      where: {
+        AND: [
+          {
+            week: {
+              lte: endW,
+              gte: startW,
+            },
+          },
+          {
+            OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+          },
+        ],
+      },
+      orderBy: {
+        week: "asc",
+      },
+    });
+
+    const weeklyWithOutSubsidy = await prisma.weeklyConsumption.findMany({
+      where: {
+        AND: [
+          {
+            week: {
+              lte: endW,
+              gte: startW,
+            },
+          },
+          {
+            OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
+          },
+        ],
+      },
+      orderBy: {
+        week: "asc",
+      },
+    });
+
+    const currentWeeklyWithSubsidy =
+      await prisma.currentWeeklyConsumption.findMany({
+        where: {
+          AND: [
+            {
+              week: {
+                lte: cEndW,
+                gte: cStartW,
+              },
+            },
+            {
+              OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+            },
+          ],
+        },
+        orderBy: {
+          week: "asc",
+        },
+      });
+
+    const currentWeeklyWithOutSubsidy =
+      await prisma.currentWeeklyConsumption.findMany({
+        where: {
+          AND: [
+            {
+              week: {
+                lte: cEndW,
+                gte: cStartW,
+              },
+            },
+            {
+              OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+            },
+          ],
+        },
+        orderBy: {
+          week: "asc",
+        },
+      });
+
+    const weeklyQueryWithSubsidy = _.concat(
+      weeklyWithSubsidy,
+      currentWeeklyWithSubsidy
+    );
+
+    const weeklyQueryWithOutSubsidy = _.concat(
+      weeklyWithOutSubsidy,
+      currentWeeklyWithOutSubsidy
+    );
+
+    const weeklyTransactionWithSubsidy = _.chain(weeklyQueryWithSubsidy)
+      .groupBy((tr) => format(new Date(tr.week), "Io"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.transactionCount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        week: key,
+        "With Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    const weeklyTransactionWithOutSubsidy = _.chain(weeklyQueryWithOutSubsidy)
+      .groupBy((tr) => format(new Date(tr.week), "Io"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.transactionCount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        week: key,
+        "With Out Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    weekSummary.totalWeeklyTransactionBySubsidy =
+      weeklyTransactionWithSubsidy.map((item, i) =>
+        Object.assign({}, item, weeklyTransactionWithOutSubsidy[i])
+      );
+
+    const weeklyPaymentWithSubsidy = _.chain(weeklyQueryWithSubsidy)
+      .groupBy((tr) => format(new Date(tr.week), "Io"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.amount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        week: key,
+        "With Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    const weeklyPaymentWithOutSubsidy = _.chain(weeklyQueryWithOutSubsidy)
+      .groupBy((tr) => format(new Date(tr.week), "Io"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.amount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        week: key,
+        "With Out Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    weekSummary.totalWeeklyPaymentBySubsidy = weeklyPaymentWithSubsidy.map(
+      (item, i) => Object.assign({}, item, weeklyPaymentWithOutSubsidy[i])
+    );
+
+    const weeklyFuelWithSubsidy = _.chain(weeklyQueryWithSubsidy)
+      .groupBy((tr) => format(new Date(tr.week), "Io"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.fuelInLiters),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        week: key,
+        "With Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    const weeklyFuelWithOutSubsidy = _.chain(weeklyQueryWithOutSubsidy)
+      .groupBy((tr) => format(new Date(tr.week), "Io"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.fuelInLiters),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        week: key,
+        "With Out Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    weekSummary.totalWeeklyFuelBySubsidy = weeklyFuelWithSubsidy.map(
+      (item, i) => Object.assign({}, item, weeklyFuelWithOutSubsidy[i])
+    );
 
     const allWeekQuery = _.concat(weeklyQuery, currentWeekQuery);
 

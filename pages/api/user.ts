@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    if (!checkUser && !(await verifyPassword(password, checkUser.password))) {
+    if (!checkUser || !(await verifyPassword(password, checkUser.password))) {
       res.status(404).json("Wrong credentials!!");
     } else {
       const user = {

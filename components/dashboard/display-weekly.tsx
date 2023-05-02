@@ -2,11 +2,10 @@ import { LineChartBySource } from "./linechart-by-source";
 const DisplayWeeklyDashBoard = ({
   totalWeeklyTransaction,
   totalWeeklyPayment,
-  totalWeeklyFuel,
 }) => {
   return (
     <div>
-      <dl className="mt-3 mx-auto grid grid-cols-1 gap-2 sm:grid-cols-1 lg:max-w-none lg:grid-cols-2">
+      <dl className="mt-3 mx-auto grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-1 lg:max-w-none lg:grid-cols-2">
         <div className="border bg-white border-gray-300 rounded-xl p-10">
           <dt className="text-gray-500 text-center">Transaction (Count)</dt>
           <dd className="mt-5 text-lg text-center">
@@ -35,7 +34,7 @@ const DisplayWeeklyDashBoard = ({
             </div>
           </dd>
         </div>
-        <div className="border bg-white border-gray-300 rounded-xl p-10">
+        {/* <div className="border bg-white border-gray-300 rounded-xl p-10">
           <dt className="text-gray-500 text-center">
             Total Consumed Fuel (Litre)
           </dt>
@@ -49,7 +48,7 @@ const DisplayWeeklyDashBoard = ({
               />
             </div>
           </dd>
-        </div>
+        </div> */}
       </dl>
     </div>
   );

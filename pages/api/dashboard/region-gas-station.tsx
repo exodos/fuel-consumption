@@ -48,16 +48,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   regionData.amountMapping = regionQuery.map((item, v) => {
     return {
-      id: regionName[v]?.name,
-      label: regionName[v]?.name,
+      id: regionName[v]?.name ? regionName[v]?.name : "UnKnown Region",
+      label: regionName[v]?.name ? regionName[v]?.name : "UnKnown Region",
       value: _.round((item.amount / totalRegionAmount._sum.amount) * 100, 2),
     };
   });
 
   regionData.fuelMapping = regionQuery.map((item, v) => {
     return {
-      id: regionName[v]?.name,
-      label: regionName[v]?.name,
+      id: regionName[v]?.name ? regionName[v]?.name : "UnKnown Region",
+      label: regionName[v]?.name ? regionName[v]?.name : "UnKnown Region",
       value: _.round(
         (item.fuel / totalRegionAmount._sum.fuelInLiters) * 100,
         2
@@ -67,16 +67,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   regionData.gasStationAmount = gasStationQuery.map((item, v) => {
     return {
-      id: companyName[v]?.name,
-      label: companyName[v]?.name,
+      id: companyName[v]?.name ? companyName[v]?.name : "UnKnown Company",
+      label: companyName[v]?.name ? companyName[v]?.name : "UnKnown Company",
       value: _.round((item.amount / totalRegionAmount._sum.amount) * 100, 2),
     };
   });
 
   regionData.gasStationFuel = gasStationQuery.map((item, v) => {
     return {
-      id: companyName[v]?.name,
-      label: companyName[v]?.name,
+      id: companyName[v]?.name ? companyName[v]?.name : "UnKnown Company",
+      label: companyName[v]?.name ? companyName[v]?.name : "UnKnown Company",
       value: _.round(
         (item.fuel / totalRegionAmount._sum.fuelInLiters) * 100,
         2

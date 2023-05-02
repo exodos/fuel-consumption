@@ -65,12 +65,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     totalDailyFuelBySubsidy: undefined,
   };
 
-  const allTotalTransactionT = 12731996;
-  const allTotalWithoutT = 472113;
-  const allTotalWithoutP = 545973469.54;
+  const totalTransactionWithSubsidy = 12731996;
+  const allTotalTransactionWithOutSubsidy = 472113;
+  const paymentWithoutSubsidy = 545973469.54;
   const thereB = 3000000000;
+  const allTransactionSum =
+    totalTransactionWithSubsidy + allTotalTransactionWithOutSubsidy;
+
+  const allTotalTransaction =
+    totalTransactionWithSubsidy + allTotalTransactionWithOutSubsidy;
 
   const dailyQuery = await prisma.dailyConsumption.findMany({
+    where: {
+      day: {
+        lte: endD,
+        gte: startD,
+      },
+    },
+    orderBy: {
+      day: "asc",
+    },
+  });
+
+  const totalDailyQuery = await prisma.dailyConsumption.findMany({
     where: {
       day: {
         lte: endD,
@@ -94,7 +111,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   });
 
-  const todayAndDaily = _.concat(dailyQuery, todayQuery);
+  const todayAndDaily = _.concat(totalDailyQuery, todayQuery);
 
   const dailyWithSubsidy = await prisma.dailyConsumption.findMany({
     where: {
@@ -179,48 +196,215 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     todayWithOutSubsidy
   );
 
-  const tTransaction = await prisma.dailyConsumption.aggregate({
+  const dailyTransactionCount = await prisma.dailyConsumption.aggregate({
+    where: {
+      day: {
+        lte: endD,
+        gte: startD,
+      },
+    },
     _sum: {
       transactionCount: true,
     },
   });
 
-  const tPayment = await prisma.consumption.aggregate({
-    _sum: {
-      amount: true,
-    },
-  });
-
-  const tTransactionWithSubsidy = await prisma.dailyConsumption.count({
+  const totalTransactionCount = await prisma.todayConsumption.aggregate({
     where: {
-      OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
-    },
-  });
-
-  const tTransactionWithOutSubsidy = await prisma.dailyConsumption.count({
-    where: {
-      OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
-    },
-  });
-
-  const tPaymentWithSubsidy = await prisma.consumption.aggregate({
-    where: {
-      reasonTypeCode: "844",
+      day: {
+        lte: endOfToday(),
+        gte: startOfToday(),
+      },
     },
     _sum: {
-      amount: true,
+      transactionCount: true,
     },
   });
-  const tPaymentWithOutSubsidy = await prisma.consumption.aggregate({
+
+  const dTotalTransaction =
+    dailyTransactionCount._sum.transactionCount +
+    totalTransactionCount._sum.transactionCount;
+
+  const dailyTotalPayment = await prisma.dailyConsumption.aggregate({
     where: {
-      NOT: {
-        reasonTypeCode: "844",
+      day: {
+        lte: endD,
+        gte: startD,
       },
     },
     _sum: {
       amount: true,
     },
   });
+
+  const todayTotalPayment = await prisma.todayConsumption.aggregate({
+    where: {
+      day: {
+        lte: endOfToday(),
+        gte: startOfToday(),
+      },
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const todayAndDailyPayment =
+    dailyTotalPayment._sum.amount + todayTotalPayment._sum.amount;
+
+  const dailyTransactionWithSubsidy = await prisma.dailyConsumption.count({
+    where: {
+      AND: [
+        {
+          day: {
+            lte: endD,
+            gte: startD,
+          },
+        },
+        {
+          OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+        },
+      ],
+    },
+  });
+
+  const todayTransactionWithSubsidy = await prisma.todayConsumption.count({
+    where: {
+      AND: [
+        {
+          day: {
+            lte: endOfToday(),
+            gte: startOfToday(),
+          },
+        },
+        {
+          OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+        },
+      ],
+    },
+  });
+
+  const todayAndDailyWithSubsidy =
+    dailyTransactionWithSubsidy + todayTransactionWithSubsidy;
+
+  const dailyTransactionWithOutSubsidy = await prisma.dailyConsumption.count({
+    where: {
+      AND: [
+        {
+          day: {
+            lte: endD,
+            gte: startD,
+          },
+        },
+        {
+          OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
+        },
+      ],
+    },
+  });
+  const todayTransactionWithOutSubsidy = await prisma.todayConsumption.count({
+    where: {
+      AND: [
+        {
+          day: {
+            lte: endOfToday(),
+            gte: startOfToday(),
+          },
+        },
+        {
+          OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
+        },
+      ],
+    },
+  });
+
+  const todayAndDailyWithOutSubsidy =
+    dailyTransactionWithOutSubsidy + todayTransactionWithOutSubsidy;
+
+  const totalDailyPaymentWithSubsidy = await prisma.dailyConsumption.aggregate({
+    where: {
+      AND: [
+        {
+          day: {
+            lte: endD,
+            gte: startD,
+          },
+        },
+        {
+          OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+        },
+      ],
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const totalTodayPaymentWithSubsidy = await prisma.todayConsumption.aggregate({
+    where: {
+      AND: [
+        {
+          day: {
+            lte: endOfToday(),
+            gte: startOfToday(),
+          },
+        },
+        {
+          OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+        },
+      ],
+    },
+    _sum: {
+      amount: true,
+    },
+  });
+
+  const totalPaymentWithSubsidy =
+    totalDailyPaymentWithSubsidy._sum.amount +
+    totalTodayPaymentWithSubsidy._sum.amount;
+
+  const totalDailyPaymentWithOutSubsidy =
+    await prisma.dailyConsumption.aggregate({
+      where: {
+        AND: [
+          {
+            day: {
+              lte: endD,
+              gte: startD,
+            },
+          },
+          {
+            OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
+          },
+        ],
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+  const totalTodayPaymentWithOutSubsidy =
+    await prisma.todayConsumption.aggregate({
+      where: {
+        AND: [
+          {
+            day: {
+              lte: endOfToday(),
+              gte: startOfToday(),
+            },
+          },
+          {
+            OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
+          },
+        ],
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+  const totalPaymentWithOutSubsidy =
+    totalDailyPaymentWithOutSubsidy._sum.amount +
+    totalTodayPaymentWithOutSubsidy._sum.amount;
 
   const monthlyAmount = await prisma.monthlyConsumption.aggregate({
     _sum: {
@@ -440,7 +624,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return {
           id: Number(key),
           name: "Total Transaction",
-          data: Number(Math.round(value + allTotalTransactionT).toFixed(1))
+          data: Number(
+            Math.round(value + totalTransactionWithSubsidy).toFixed(1)
+          )
             .toLocaleString()
             .toString(),
           icon: "HiOutlineRefresh",
@@ -463,7 +649,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       id: 1,
       name: "Total Transaction With Subsidy",
       data: Number(
-        Math.round(tTransactionWithSubsidy + allTotalTransactionT).toFixed(1)
+        Math.round(
+          todayAndDailyWithSubsidy + totalTransactionWithSubsidy
+        ).toFixed(1)
       )
         .toLocaleString()
         .toString(),
@@ -475,7 +663,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       name: "Total Payment With Subsidy",
       data: Number(
         Math.round(
-          tPaymentWithSubsidy._sum.amount + monthlyAmount._sum.amount + thereB
+          totalPaymentWithSubsidy + monthlyAmount._sum.amount + thereB
         ).toFixed(1)
       )
         .toLocaleString()
@@ -489,7 +677,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       id: 1,
       name: "Total Transaction WithOut Subsidy",
       data: Number(
-        Math.round(tTransactionWithOutSubsidy + allTotalWithoutT).toFixed(1)
+        Math.round(
+          todayAndDailyWithOutSubsidy + allTotalTransactionWithOutSubsidy
+        ).toFixed(1)
       )
         .toLocaleString()
         .toString(),
@@ -500,9 +690,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       id: 2,
       name: "Total Payment WithOut Subsidy",
       data: Number(
-        Math.round(
-          tPaymentWithOutSubsidy._sum.amount + allTotalWithoutP
-        ).toFixed(1)
+        Math.round(totalPaymentWithOutSubsidy + paymentWithoutSubsidy).toFixed(
+          1
+        )
       )
         .toLocaleString()
         .toString(),
@@ -569,7 +759,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return {
           id: rr.toUpperCase(),
           label: rr.toUpperCase(),
-          value: Number(Math.round(value + allTotalTransactionT).toFixed(1)),
+          value: Number(Math.round(value + allTransactionSum).toFixed(1)),
         };
       }
       return {
@@ -598,7 +788,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return {
           id: rr.toUpperCase(),
           label: rr.toUpperCase(),
-          value: Number(Math.round(value + monthlySum + thereB).toFixed(1)),
+          value: Number(
+            Math.round(
+              value + paymentWithoutSubsidy + monthlySum + thereB
+            ).toFixed(1)
+          ),
         };
       }
       return {
@@ -616,9 +810,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       id: 1,
       name: "Total Transaction",
       data: Number(
-        Math.round(
-          tTransaction._sum.transactionCount + allTotalTransactionT
-        ).toFixed(1)
+        Math.round(dTotalTransaction + allTotalTransaction).toFixed(1)
       )
         .toLocaleString()
         .toString(),
@@ -630,7 +822,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       name: "Total Payment",
       data: Number(
         Math.round(
-          tPayment._sum.amount + monthlyAmount._sum.amount + thereB
+          todayAndDailyPayment +
+            paymentWithoutSubsidy +
+            monthlyAmount._sum.amount +
+            thereB
         ).toFixed(1)
       )
         .toLocaleString()

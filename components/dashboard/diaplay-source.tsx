@@ -13,7 +13,7 @@ const DisplaySource = ({
 }) => {
   return (
     <div>
-      <dl className="mt-3 mx-auto grid grid-cols-1 gap-2 sm:grid-cols-1 lg:max-w-none lg:grid-cols-2">
+      <dl className="mt-3 mx-auto grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-1 lg:max-w-none lg:grid-cols-2">
         <TransactionDonatChart
           data={totalTransactionBySourcePie}
           textHeader="Total Transaction By Source (Count)"

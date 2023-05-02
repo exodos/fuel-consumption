@@ -1,23 +1,27 @@
 import { Card, Title, LineChart } from "@tremor/react";
 
+const options = {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+};
 const dataFormatter = (number: number) =>
-  `${Intl.NumberFormat("us")
-    .format(number / 1000000)
-    .toString()}M`;
-const TransactionBySubsidy = ({ totalDailyTransactionBySubsidy }) => {
+  `${Intl.NumberFormat("us", options)
+    .format(number / 1000)
+    .toString()}K`;
+const TransactionBySubsidy = ({ transactionData, title, colors, byIndex }) => {
   return (
     <Card className="relative border bg-white border-gray-300 rounded-xl p-10">
-      {/* <Flex className="space-x-4" justifyContent="start" alignItems="center"> */}
-      <Title>Total Daily Transaction With And With Out Subsidy (Count)</Title>
+      <Title>{title}</Title>
       <LineChart
         className="mt-8"
-        data={totalDailyTransactionBySubsidy}
-        index="day"
+        data={transactionData}
+        index={byIndex}
         categories={["With Subsidy", "With Out Subsidy"]}
-        colors={["indigo", "fuchsia"]}
+        colors={colors}
         valueFormatter={dataFormatter}
         // showLegend={false}
         yAxisWidth={40}
+        curveType="natural"
       />
     </Card>
   );

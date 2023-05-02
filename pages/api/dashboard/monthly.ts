@@ -16,6 +16,9 @@ type monthlyData = {
   totalMonthlyTransaction: any;
   totalMonthlyPayment: any;
   totalMonthlyFuel: any;
+  totalMonthlyTransactionBySubsidy: any;
+  totalMonthlyPaymentBySubsidy: any;
+  totalMonthlyFuelBySubsidy: any;
 };
 
 const getLastSixMonths = () => {
@@ -42,6 +45,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     totalMonthlyTransaction: undefined,
     totalMonthlyPayment: undefined,
     totalMonthlyFuel: undefined,
+    totalMonthlyTransactionBySubsidy: undefined,
+    totalMonthlyPaymentBySubsidy: undefined,
+    totalMonthlyFuelBySubsidy: undefined,
   };
 
   try {
@@ -69,6 +75,197 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           month: "asc",
         },
       }
+    );
+
+    const monthlyWithSubsidy = await prisma.monthlyConsumption.findMany({
+      where: {
+        AND: [
+          {
+            month: {
+              lte: endM,
+              gte: startM,
+            },
+          },
+          {
+            OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+          },
+        ],
+      },
+      orderBy: {
+        month: "asc",
+      },
+    });
+
+    const currentMonthWithSubsidy =
+      await prisma.currentMonthlyConsumption.findMany({
+        where: {
+          AND: [
+            {
+              month: {
+                lte: cEndM,
+                gte: cStartM,
+              },
+            },
+            {
+              OR: [{ reasonTypeCode: "844" }, { reasonTypeCode: "875" }],
+            },
+          ],
+        },
+        orderBy: {
+          month: "asc",
+        },
+      });
+
+    const monthlyWithOutSubsidy = await prisma.monthlyConsumption.findMany({
+      where: {
+        AND: [
+          {
+            month: {
+              lte: endM,
+              gte: startM,
+            },
+          },
+          {
+            OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
+          },
+        ],
+      },
+      orderBy: {
+        month: "asc",
+      },
+    });
+
+    const currentMonthWithOutSubsidy =
+      await prisma.currentMonthlyConsumption.findMany({
+        where: {
+          AND: [
+            {
+              month: {
+                lte: cEndM,
+                gte: cStartM,
+              },
+            },
+            {
+              OR: [{ reasonTypeCode: "845" }, { reasonTypeCode: "876" }],
+            },
+          ],
+        },
+        orderBy: {
+          month: "asc",
+        },
+      });
+
+    const monthlyQueryWithSubsidy = _.concat(
+      monthlyWithSubsidy,
+      currentMonthWithSubsidy
+    );
+
+    const monthlyQueryWithOutSubsidy = _.concat(
+      monthlyWithOutSubsidy,
+      currentMonthWithOutSubsidy
+    );
+
+    const monthlyTransactionWithSubsidy = _.chain(monthlyQueryWithSubsidy)
+      .groupBy((tr) => format(new Date(tr.month), "MMM"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.transactionCount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        month: key,
+        "With Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    const monthlyTransactionWithOutSubsidy = _.chain(monthlyQueryWithOutSubsidy)
+      .groupBy((tr) => format(new Date(tr.month), "MMM"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.transactionCount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        month: key,
+        "With Out Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    monthlySummary.totalMonthlyTransactionBySubsidy =
+      monthlyTransactionWithSubsidy.map((item, i) =>
+        Object.assign({}, item, monthlyTransactionWithOutSubsidy[i])
+      );
+
+    const monthlyPaymentWithSubsidy = _.chain(monthlyQueryWithSubsidy)
+      .groupBy((tr) => format(new Date(tr.month), "MMM"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.amount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        month: key,
+        "With Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    const monthlyPaymentWithOutSubsidy = _.chain(monthlyQueryWithOutSubsidy)
+      .groupBy((tr) => format(new Date(tr.month), "MMM"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.amount),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        month: key,
+        "With Out Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    monthlySummary.totalMonthlyPaymentBySubsidy = monthlyPaymentWithSubsidy.map(
+      (item, i) => Object.assign({}, item, monthlyPaymentWithOutSubsidy[i])
+    );
+
+    const monthlyFuelWithSubsidy = _.chain(monthlyQueryWithSubsidy)
+      .groupBy((tr) => format(new Date(tr.month), "MMM"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.fuelInLiters),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        month: key,
+        "With Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    const monthlyFuelWithOutSubsidy = _.chain(monthlyQueryWithOutSubsidy)
+      .groupBy((tr) => format(new Date(tr.month), "MMM"))
+      .mapValues((value) => {
+        return _.round(
+          _.sumBy(value, (tr) => tr.fuelInLiters),
+          2
+        );
+      })
+      .mapValues((value, key) => ({
+        month: key,
+        "With Out Subsidy": value,
+      }))
+      .values()
+      .value();
+
+    monthlySummary.totalMonthlyFuelBySubsidy = monthlyFuelWithSubsidy.map(
+      (item, i) => Object.assign({}, item, monthlyFuelWithOutSubsidy[i])
     );
 
     const allMonthQuery = _.concat(monthlyQuery, currentMonthlyQuery);

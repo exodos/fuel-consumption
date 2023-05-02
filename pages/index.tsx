@@ -11,6 +11,9 @@ import DisplayGasStationData from "@/components/dashboard/display-gas-station";
 import DisplayTransaction from "@/components/dashboard/transaction-display";
 import DisplaySource from "@/components/dashboard/diaplay-source";
 import DisplayDailyWithSubsidy from "@/components/dashboard/diaplay-daily-with-subsidy";
+import FuelTrendDisplay from "@/components/dashboard/fuel-display";
+import DisplayWeeklyBySubsidy from "@/components/dashboard/diaplay-weekly-by-subsidy";
+import DisplayMonthlyBySubsidy from "@/components/dashboard/diaplay-monthly-by-subsidy";
 
 const Home = ({
   dailyData,
@@ -31,10 +34,22 @@ const Home = ({
     totalDailyPaymentBySubsidy,
     totalDailyFuelBySubsidy,
   } = dailyData ?? {};
-  const { totalWeeklyTransaction, totalWeeklyPayment, totalWeeklyFuel } =
-    weeklyData ?? {};
-  const { totalMonthlyTransaction, totalMonthlyPayment, totalMonthlyFuel } =
-    monthlyData ?? {};
+  const {
+    totalWeeklyTransaction,
+    totalWeeklyPayment,
+    totalWeeklyFuel,
+    totalWeeklyTransactionBySubsidy,
+    totalWeeklyPaymentBySubsidy,
+    totalWeeklyFuelBySubsidy,
+  } = weeklyData ?? {};
+  const {
+    totalMonthlyTransaction,
+    totalMonthlyPayment,
+    totalMonthlyFuel,
+    totalMonthlyTransactionBySubsidy,
+    totalMonthlyPaymentBySubsidy,
+    totalMonthlyFuelBySubsidy,
+  } = monthlyData ?? {};
   const { amountMapping, fuelMapping, gasStationAmount, gasStationFuel } =
     regionData ?? {};
   return (
@@ -66,13 +81,29 @@ const Home = ({
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
           <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
-            {/* Total Daily Transaction,Payment and Fuel With And Without Subsidy */}
             Total Daily With And Without Subsidy Comparison
           </h1>
           <DisplayDailyWithSubsidy
             totalDailyTransactionBySubsidy={totalDailyTransactionBySubsidy}
             totalDailyPaymentBySubsidy={totalDailyPaymentBySubsidy}
-            totalDailyFuelBySubsidy={totalDailyFuelBySubsidy}
+          />
+        </div>
+        <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
+          <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
+            Total Weekly With And Without Subsidy Comparison
+          </h1>
+          <DisplayWeeklyBySubsidy
+            totalWeeklyTransactionBySubsidy={totalWeeklyTransactionBySubsidy}
+            totalWeeklyPaymentBySubsidy={totalWeeklyPaymentBySubsidy}
+          />
+        </div>
+        <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
+          <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
+            Total Monthly With And Without Subsidy Comparison
+          </h1>
+          <DisplayMonthlyBySubsidy
+            totalMonthlyTransactionBySubsidy={totalMonthlyTransactionBySubsidy}
+            totalMonthlyPaymentBySubsidy={totalMonthlyPaymentBySubsidy}
           />
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
@@ -82,7 +113,6 @@ const Home = ({
           <DisplayDailyDashBoard
             totalDailyTransaction={totalDailyTransaction}
             totalDailyPayment={totalDailyPayment}
-            totalDailyFuel={totalDailyFuel}
           />
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
@@ -92,7 +122,6 @@ const Home = ({
           <DisplayWeeklyDashBoard
             totalWeeklyTransaction={totalWeeklyTransaction}
             totalWeeklyPayment={totalWeeklyPayment}
-            totalWeeklyFuel={totalWeeklyFuel}
           />
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
@@ -102,9 +131,19 @@ const Home = ({
           <DisplayMonthlyDashBoard
             totalMonthlyTransaction={totalMonthlyTransaction}
             totalMonthlyPayment={totalMonthlyPayment}
+          />
+        </div>
+        <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
+          <h1 className="text-xl font-semibold text-lightGreen justify-center ml-5">
+            Fuel Trend
+          </h1>
+          <FuelTrendDisplay
+            totalDailyFuelBySubsidy={totalDailyFuelBySubsidy}
+            totalWeeklyFuelBySubsidy={totalWeeklyFuelBySubsidy}
+            totalMonthlyFuelBySubsidy={totalMonthlyFuelBySubsidy}
+            totalDailyFuel={totalDailyFuel}
+            totalWeeklyFuel={totalWeeklyFuel}
             totalMonthlyFuel={totalMonthlyFuel}
-            amountMapping={amountMapping}
-            fuelMapping={fuelMapping}
           />
         </div>
         <div className="shadow sm:rounded-lg sm:p-6 mt-5 bg-white">
@@ -178,8 +217,6 @@ export const getServerSideProps = async ({ req, res }) => {
     console.log(err);
     res.status(400).json({ message: err.message });
   }
-
-  // console.log(session);
 
   return {
     props: {
