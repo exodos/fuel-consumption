@@ -21,8 +21,8 @@ async function main() {
   Array.from({ length: 12 }).forEach(async () => {
     let todayData = await prisma.todayConsumption.create({
       data: {
-        amount: faker.datatype.number({ min: 2000000, max: 10000000 }),
-        fuelInLiters: faker.datatype.number({ min: 2000000, max: 10000000 }),
+        amount: faker.datatype.number({ min: 2000, max: 100000 }),
+        fuelInLiters: faker.datatype.number({ min: 20000, max: 100000 }),
         fuelType: faker.helpers.arrayElement(["Diesel", "Gasoline"]),
         fuelStationId: faker.helpers.arrayElement([
           "15",
@@ -43,30 +43,30 @@ async function main() {
           "30",
         ]),
         day: faker.helpers.arrayElement([
-          "2023-04-28T00:00:00.000Z",
-          "2023-04-28T01:00:00.000Z",
-          "2023-04-28T02:00:00.000Z",
-          "2023-04-28T03:00:00.000Z",
-          "2023-04-28T04:04:00.000Z",
-          "2023-04-28T05:00:00.000Z",
-          "2023-04-28T06:00:00.000Z",
-          "2023-04-28T07:00:00.000Z",
-          "2023-04-28T08:00:00.000Z",
-          "2023-04-28T09:00:00.000Z",
-          "2023-04-28T10:00:00.000Z",
-          "2023-04-28T11:00:00.000Z",
-          "2023-04-28T12:00:00.000Z",
-          "2023-04-28T13:00:00.000Z",
-          "2023-04-28T14:00:00.000Z",
-          "2023-04-28T15:00:00.000Z",
-          "2023-04-28T16:00:00.000Z",
-          "2023-04-28T17:00:00.000Z",
-          "2023-04-28T18:00:00.000Z",
-          "2023-04-28T19:00:00.000Z",
-          "2023-04-28T20:00:00.000Z",
-          "2023-04-28T21:00:00.000Z",
-          "2023-04-28T22:00:00.000Z",
-          "2023-04-28T23:00:00.000Z",
+          "2023-05-01T00:00:00.000Z",
+          "2023-05-01T01:00:00.000Z",
+          "2023-05-01T02:00:00.000Z",
+          "2023-05-01T03:00:00.000Z",
+          "2023-05-01T04:04:00.000Z",
+          "2023-05-01T05:00:00.000Z",
+          "2023-05-01T06:00:00.000Z",
+          "2023-05-01T07:00:00.000Z",
+          "2023-05-01T08:00:00.000Z",
+          "2023-05-01T09:00:00.000Z",
+          "2023-05-01T10:00:00.000Z",
+          "2023-05-01T11:00:00.000Z",
+          "2023-05-01T12:00:00.000Z",
+          "2023-05-01T13:00:00.000Z",
+          "2023-05-01T14:00:00.000Z",
+          "2023-05-01T15:00:00.000Z",
+          "2023-05-01T16:00:00.000Z",
+          "2023-05-01T17:00:00.000Z",
+          "2023-05-01T18:00:00.000Z",
+          "2023-05-01T19:00:00.000Z",
+          "2023-05-01T20:00:00.000Z",
+          "2023-05-01T21:00:00.000Z",
+          "2023-05-01T22:00:00.000Z",
+          "2023-05-01T23:00:00.000Z",
         ]),
         sourceId: faker.helpers.arrayElement(["1", "2", "3"]),
         fuelStationRegion: faker.helpers.arrayElement([
@@ -125,10 +125,12 @@ async function main() {
           "39",
           "40",
         ]),
-        transactionCount: faker.helpers.arrayElement([
-          300000, 350000, 400000, 450000, 500000, 550000, 600000, 650000,
-          700000, 750000, 800000, 850000, 900000, 950000, 100000,
-        ]),
+        transactionCount: faker.datatype.number({ min: 3000, max: 10000 }),
+
+        // transactionCount: faker.helpers.arrayElement([
+        //   3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500,
+        //   7000, 7500, 8000, 850000, 900000, 950000, 100000,
+        // ]),
         reasonTypeCode: faker.helpers.arrayElement([
           "844",
           "875",
@@ -140,8 +142,8 @@ async function main() {
     console.log(todayData);
     let currentWeekData = await prisma.currentWeeklyConsumption.create({
       data: {
-        amount: faker.datatype.number({ min: 20000, max: 30000 }),
-        fuelInLiters: faker.datatype.number({ min: 20000, max: 30000 }),
+        amount: faker.datatype.number({ min: 2000, max: 3000 }),
+        fuelInLiters: faker.datatype.number({ min: 2000, max: 3000 }),
         fuelType: faker.helpers.arrayElement(["Diesel", "Gasoline"]),
         fuelStationId: faker.helpers.arrayElement([
           "15",
@@ -219,7 +221,7 @@ async function main() {
           "39",
           "40",
         ]),
-        transactionCount: faker.datatype.number({ min: 21000, max: 30000 }),
+        transactionCount: faker.datatype.number({ min: 3100, max: 4000 }),
         reasonTypeCode: faker.helpers.arrayElement([
           "844",
           "875",
@@ -310,7 +312,7 @@ async function main() {
           "39",
           "40",
         ]),
-        transactionCount: faker.datatype.number({ min: 30000, max: 100000 }),
+        transactionCount: faker.datatype.number({ min: 3100, max: 10000 }),
         reasonTypeCode: faker.helpers.arrayElement([
           "844",
           "875",
@@ -324,8 +326,8 @@ async function main() {
   Array.from({ length: 2000 }).forEach(async () => {
     let dailyData = await prisma.dailyConsumption.create({
       data: {
-        amount: faker.datatype.number({ min: 2000000, max: 10000000 }),
-        fuelInLiters: faker.datatype.number({ min: 2000000, max: 10000000 }),
+        amount: faker.datatype.number({ min: 2000, max: 3000 }),
+        fuelInLiters: faker.datatype.number({ min: 2000, max: 3000 }),
         fuelType: faker.helpers.arrayElement(["Diesel", "Gasoline"]),
         fuelStationId: faker.helpers.arrayElement([
           "15",
@@ -347,7 +349,7 @@ async function main() {
         ]),
         day: faker.date.between(
           "2023-03-08T16:17:14.666Z",
-          "2023-04-27T16:17:14.666Z"
+          "2023-04-30T16:17:14.666Z"
         ),
         sourceId: faker.helpers.arrayElement(["1", "2", "3"]),
         fuelStationRegion: faker.helpers.arrayElement([
@@ -406,10 +408,11 @@ async function main() {
           "39",
           "40",
         ]),
-        transactionCount: faker.helpers.arrayElement([
-          300000, 350000, 400000, 450000, 500000, 550000, 600000, 650000,
-          700000, 750000, 800000, 850000, 900000, 950000, 100000,
-        ]),
+        transactionCount: faker.datatype.number({ min: 3000, max: 4000 }),
+        // transactionCount: faker.helpers.arrayElement([
+        //   300000, 350000, 400000, 450000, 500000, 550000, 600000, 650000,
+        //   700000, 750000, 800000, 850000, 900000, 950000, 100000,
+        // ]),
         reasonTypeCode: faker.helpers.arrayElement([
           "844",
           "875",
@@ -421,8 +424,8 @@ async function main() {
     console.log(dailyData);
     let weeklyData = await prisma.weeklyConsumption.create({
       data: {
-        amount: faker.datatype.number({ min: 20000, max: 30000 }),
-        fuelInLiters: faker.datatype.number({ min: 20000, max: 30000 }),
+        amount: faker.datatype.number({ min: 6000, max: 10000 }),
+        fuelInLiters: faker.datatype.number({ min: 6000, max: 10000 }),
         fuelType: faker.helpers.arrayElement(["Diesel", "Gasoline"]),
         fuelStationId: faker.helpers.arrayElement([
           "15",
@@ -503,7 +506,7 @@ async function main() {
           "39",
           "40",
         ]),
-        transactionCount: faker.datatype.number({ min: 21000, max: 30000 }),
+        transactionCount: faker.datatype.number({ min: 6100, max: 10000 }),
         reasonTypeCode: faker.helpers.arrayElement([
           "844",
           "875",
@@ -515,8 +518,8 @@ async function main() {
     console.log(weeklyData);
     let monthlyData = await prisma.monthlyConsumption.create({
       data: {
-        amount: faker.datatype.number({ min: 30000, max: 40000 }),
-        fuelInLiters: faker.datatype.number({ min: 30000, max: 40000 }),
+        amount: faker.datatype.number({ min: 20000, max: 30000 }),
+        fuelInLiters: faker.datatype.number({ min: 20000, max: 30000 }),
         fuelType: faker.helpers.arrayElement(["Diesel", "Gasoline"]),
         fuelStationId: faker.helpers.arrayElement([
           "15",
@@ -640,7 +643,7 @@ async function main() {
         plateNumber: faker.vehicle.vrm(),
         paidAt: faker.date.between(
           "2022-03-08T00:00:00.000Z",
-          "2023-04-28T00:00:00.000Z"
+          "2023-05-01T00:00:00.000Z"
         ),
         debitAccountNumber: faker.finance.account(),
         creditAccountNumber: faker.finance.account(),

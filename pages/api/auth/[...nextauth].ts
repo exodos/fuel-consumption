@@ -10,7 +10,14 @@ export const authOptions: NextAuthOptions = {
         email: { label: "email", type: "email" },
         password: { label: "password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, _) {
+        // const { email, password } = credentials as {
+        //   email: string;
+        //   password: string;
+        // };
+        // if (!email || !password) {
+        //   throw new Error("Missing username or password");
+        // }
         const response = await fetch(baseUrl + `/api/user`, {
           method: "POST",
           body: JSON.stringify(credentials),
